@@ -1,0 +1,11 @@
+dist
+node_modules
+coverage
+
+# data definition files
+**/*.d.ts
+
+*.js
+
+package.json
+tsconfig.json
