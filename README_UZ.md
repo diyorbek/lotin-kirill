@@ -1,10 +1,10 @@
 # Lotin-Kirill
 
-Transliterator for Uzbek words with high accuracy (from latin alphabet to cyrillic and vice versa).
+O‘zbek tilidagi so‘zlarni yuqori aniqlikda tranliteratsiya qiluvchi kutubxona. So‘zlarni lotin alifbosidan kirillga va aksincha o‘girish.
 
-### [O‘zbek tilida o‘qish](https://github.com/diyorbek/lotin-kirill/blob/master/README_UZ.md)
+### [Read in English](https://github.com/diyorbek/lotin-kirill/blob/master/README.md)
 
-## Installation
+## O‘rnatish
 
 NPM
 
@@ -18,9 +18,9 @@ Yarn
 yarn add lotin-kirill
 ```
 
-## Usage
+## Foydalanish
 
-Initialize the engine:
+Initsializatsiya:
 
 ```js
 import Transliterator from 'lotin-kirill';
@@ -28,13 +28,13 @@ import Transliterator from 'lotin-kirill';
 const transliterator = new Transliterator();
 ```
 
-### Single word transliteration:
+### So‘zma-so‘z o‘girish:
 
 `toLatin(word: string): string`
 
 `toCyrillic(word: string): string`
 
-Example
+Naʼmuna
 
 ```js
 const latinWord = transliterator.toLatin('мотивация');
@@ -44,13 +44,13 @@ const cyrillicWord = transliterator.toCyrillic("e'lon");
 console.log(cyrillicWord); // -> 'эълон'
 ```
 
-### Text (multiple words) tranliteration:
+### Tekstni (bir necha so‘zdan iborat) o‘girish:
 
 `textToLatin(text: string): string`
 
 `textToCyrillic(text: string): string`
 
-Example
+Naʼmuna
 
 ```js
 const latinText = transliterator.textToLatin('Жуда узун кириллча текст.');
@@ -60,63 +60,63 @@ const cyrillicText = transliterator.textToCyrillic('Juda uzun lotincha tekst.');
 console.log(cyrillicText); // -> 'Жуда узун лотинча текст.'
 ```
 
-### Exceptional words
+### Istisno so‘zlar
 
-You can initialize the transliterator object with exceptional words list:
+Transliterator obyektini istisno so‘zlar ro‘yhati bilan initsializatsiya qilishingiz mumkin:
 
 ```js
 import Transliterator from 'lotin-kirill';
 
 const transliterator = new Transliterator([
-  // [latinWord, cyrillicWord]
+  // [lotincha, kirillcha]
   ['oktabr', 'октябрь'],
   ['Google', 'Google'],
 ]);
 
 const cyrillicWord = transliterator.toCyrillic('oktabr');
-console.log(cyrillicWord); // -> 'октябрь' (not 'октабр')
+console.log(cyrillicWord); // -> 'октябрь' ('октабр' emas)
 ```
 
-One exceptional pair is enough for both cyrilllic and latin transliterations.
+Bir istisno juftligi kirill va lotin transliteratsiyasi uchun yetarli.
 
 ```js
-// This also works
+// Bu ham ishlaydi
 const latinWord = transliterator.toLatin('октябрь');
 console.log(latinWord); // -> 'oktabr' (not 'oktyabr')
 ```
 
-If exceptional pair is a pair of same words, the word is not transliterated.
+Agar istisno jusfligi bir xil so‘zlardan iborat bo‘lsa, o‘sha so‘z o‘girilmaydi.
 
 ```js
 const cyrillicWord = transliterator.toCyrillic('Google');
 console.log(cyrillicWord); // -> 'Google'
 ```
 
-Exceptional words with sufixes are also detected.
+Istisnoli so‘zlar qo‘shimcha qo‘shilgan holatida ham to‘g‘ri o‘giriladi.
 
-**Variants of a words with prefixes should be added as a separate exceptional!**
+**Faqat old qo'shimchalar bundan mustasno!** So‘zning old qo‘shimcha qo‘shilgan varianti alohida istisno sifatida qo‘shilishi kerak.
 
 ```js
-// This also works
+// Bu ham ishlaydi
 const latinWord = transliterator.toLatin('октябрда');
-console.log(latinWord); // -> 'oktabrda' (not 'oktyabrda')
+console.log(latinWord); // -> 'oktabrda' ('oktyabrda' emas)
 ```
 
-You can extend the exceptionals list after initialization of the transliterator.
+Istisno ro‘yhatini initsializatsiyadan keyin ham kengaytirish mumkin.
 
 ```js
 transliterator.extendExceptionals([['nol', 'ноль']]);
 ```
 
-Or purge all of the exceptionals added to trasnliterator.
+Yoki ro‘yhatni butunlay tozalash mumkin.
 
 ```js
 transliterator.purgeExceptionals();
 ```
 
-### Pure trasnliterator functions
+### Asl transliteratsiya funksiyalari
 
-There are pure transliterator functions which operates only on basic transliteration rules. These functions don't lookup words in exceptionals list.
+Kutubxonada so‘zlarni transliteratsiyaning faqat fundamental qoidalari asosoida ishlovchi asl transliteratsiya funksiyalari mavjud. Bu funksiyalar berilgan so‘zni istisno ro‘yhati bilan solishtirmaydi.
 
 `cyrillicToLatin(word: string): string`
 
