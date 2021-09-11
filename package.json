@@ -1,9 +1,18 @@
 {
   "name": "lotin-kirill",
   "version": "0.0.3",
-  "description": "Transform Uzbek latin characters into Uzbek-cyrillic characters.",
+  "description": "Transform Uzbek latin characters into Uzbek-cyrillic characters or vice versa. O'zbekcha so'zlarni lotin alifbosidan kirill alifbosiga (yoki aksincha) o'girish.",
   "author": "Diyorbek Sadullaev <diyorbek3377@gmail.com>",
   "license": "MIT",
+  "repository": "git@github.com:diyorbek/lotin-kirill.git",
+  "keywords": [
+    "lotin",
+    "kirill",
+    "lotin-kirill",
+    "alifbo",
+    "transliteratsiya",
+    "o'zbekcha"
+  ],
   "files": [
     "./pkg"
   ],
