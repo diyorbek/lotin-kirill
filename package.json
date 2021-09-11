@@ -1,6 +1,6 @@
 {
   "name": "lotin-kirill",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Transform Uzbek latin characters into Uzbek-cyrillic characters.",
   "author": "Diyorbek Sadullaev <diyorbek3377@gmail.com>",
   "license": "MIT",
