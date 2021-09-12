@@ -1,5 +1,12 @@
 # Lotin-Kirill
 
+[![](https://github.com/diyorbek/lotin-kirill/workflows/Build/badge.svg?branch=main)](https://github.com/diyorbek/lotin-kirill/actions)
+[![](https://codecov.io/gh/diyorbek/lotin-kirill/branch/main/graph/badge.svg)](https://codecov.io/gh/diyorbek/lotin-kirill)
+[![](https://img.shields.io/npm/v/lotin-kirill)](https://npmjs.com/lotin-kirill)
+[![](https://img.shields.io/npm/types/lotin-kirill)](https://npmjs.com/lotin-kirill)
+[![](https://img.shields.io/bundlephobia/minzip/lotin-kirill)](https://bundlephobia.com/result?p=lotin-kirill)
+[![](https://img.shields.io/npm/l/lotin-kirill)](https://npmjs.com/lotin-kirill)
+
 Transliterator for Uzbek words with high accuracy (from latin alphabet to cyrillic and vice versa).
 
 ### [O‘zbek tilida o‘qish](https://github.com/diyorbek/lotin-kirill/blob/master/README_UZ.md)
@@ -94,7 +101,7 @@ console.log(cyrillicWord); // -> 'Google'
 
 Exceptional words with sufixes are also detected.
 
-**Variants of a words with prefixes should be added as a separate exceptional!**
+**Variants of a word with prefixes should be added as separate exceptionals!**
 
 ```js
 // This also works
