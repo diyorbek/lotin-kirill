@@ -69,6 +69,9 @@
         "@pika/plugin-build-node"
       ],
       [
+        "@pika/plugin-build-types"
+      ],
+      [
         "pika-plugin-build-legacy-browser",
         {
           "name": "lotinKirill",
