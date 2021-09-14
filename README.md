@@ -25,6 +25,12 @@ Yarn
 yarn add lotin-kirill
 ```
 
+UNPKG
+
+```html
+<script src="https://unpkg.com/lotin-kirill/dist-browser/index.min.js"></script>
+```
+
 ## Usage
 
 Initialize the engine:
@@ -33,6 +39,16 @@ Initialize the engine:
 import Transliterator from 'lotin-kirill';
 
 const transliterator = new Transliterator();
+```
+
+When using UNPKG distribution:
+
+```html
+<script src="https://unpkg.com/lotin-kirill/dist-browser/index.min.js"></script>
+<script>
+  const Transliterator = lotinKirill.default;
+  const transliterator = new Transliterator();
+</script>
 ```
 
 ### Single word transliteration:
