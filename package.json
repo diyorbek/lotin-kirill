@@ -71,7 +71,8 @@
       [
         "pika-plugin-build-legacy-browser",
         {
-          "name": "lotinKirill"
+          "name": "lotinKirill",
+          "sourcemap": false
         }
       ]
     ]
