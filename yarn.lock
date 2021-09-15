@@ -6423,12 +6423,13 @@ pify@^4.0.1:
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
-pika-plugin-build-legacy-browser@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/pika-plugin-build-legacy-browser/-/pika-plugin-build-legacy-browser-0.0.2.tgz#2aa950c54ce78c6f0ebceed1c216612204dc4399"
-  integrity sha512-RpLelbz3TcKoWZWQmbGbjG5/d+sxcrZlqvsAFAVXAp5WHAJ4Nr8mntTnBj0xHsapbsL7mfuFlwI2GtQ7CNRmaA==
+pika-plugin-build-legacy-browser@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/pika-plugin-build-legacy-browser/-/pika-plugin-build-legacy-browser-0.0.3.tgz#ddffe5fe0f33fe7542999d9df37b8dd672feaedd"
+  integrity sha512-dPV1C74O5QwvtUkxjCr8Aj62jv1k8xjvmJoq2TZE8k9l+Hroo4Qm1jWuHBcd1HjUxmPH2EiADOhbRQBrWbPVHA==
   dependencies:
     "@babel/core" "^7.0.0"
+    "@babel/plugin-proposal-class-properties" "^7.14.5"
     "@babel/plugin-syntax-dynamic-import" "^7.2.0"
     "@babel/plugin-syntax-import-meta" "^7.2.0"
     "@babel/preset-env" "^7.2.3"
