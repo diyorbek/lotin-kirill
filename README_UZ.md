@@ -25,6 +25,12 @@ Yarn
 yarn add lotin-kirill
 ```
 
+UNPKG
+
+```html
+<script src="https://unpkg.com/lotin-kirill/dist-umd/index.min.js"></script>
+```
+
 ## Foydalanish
 
 Initsializatsiya:
@@ -33,6 +39,16 @@ Initsializatsiya:
 import Transliterator from 'lotin-kirill';
 
 const transliterator = new Transliterator();
+```
+
+UNPKG orqali ulaganda:
+
+```html
+<script src="https://unpkg.com/lotin-kirill/dist-umd/index.min.js"></script>
+<script>
+  const Transliterator = lotinKirill.default;
+  const transliterator = new Transliterator();
+</script>
 ```
 
 ### So‘zma-so‘z o‘girish:
