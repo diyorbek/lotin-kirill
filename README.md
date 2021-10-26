@@ -7,7 +7,7 @@
 [![](https://img.shields.io/bundlephobia/minzip/lotin-kirill)](https://bundlephobia.com/result?p=lotin-kirill)
 [![](https://img.shields.io/npm/l/lotin-kirill)](https://npmjs.com/lotin-kirill)
 
-Transliterator for Uzbek words with high accuracy (from latin alphabet to cyrillic and vice versa).
+Transliterator for Uzbek words with high accuracy (from latin alphabet to cyrillic and vice versa). Used at [transliterator.uz](https://transliterator.uz/)
 
 ### [O‘zbek tilida o‘qish](https://github.com/diyorbek/lotin-kirill/blob/master/README_UZ.md)
 
