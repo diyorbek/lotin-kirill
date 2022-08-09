@@ -131,7 +131,7 @@ You can extend the exceptionals list after initialization of the transliterator.
 transliterator.extendExceptionals([['nol', 'ноль']]);
 ```
 
-Or purge all of the exceptionals added to trasnliterator.
+Or purge all of the exceptionals added to transliterator.
 
 ```js
 transliterator.purgeExceptionals();
@@ -139,7 +139,7 @@ transliterator.purgeExceptionals();
 
 ### Pure trasnliterator functions
 
-There are pure transliterator functions which operates only on basic transliteration rules. These functions don't lookup words in exceptionals list.
+There are pure transliterator functions which operate only on basic transliteration rules. These functions don't look up words in exceptionals list.
 
 `cyrillicToLatin(word: string): string`
 
