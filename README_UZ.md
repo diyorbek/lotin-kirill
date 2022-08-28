@@ -7,7 +7,7 @@
 [![](https://img.shields.io/bundlephobia/minzip/lotin-kirill)](https://bundlephobia.com/result?p=lotin-kirill)
 [![](https://img.shields.io/npm/l/lotin-kirill)](https://npmjs.com/lotin-kirill)
 
-O‘zbek tilidagi so‘zlarni yuqori aniqlikda tranliteratsiya qiluvchi kutubxona. So‘zlarni lotin alifbosidan kirillga va aksincha o‘girish.
+O‘zbek tilidagi so‘zlarni yuqori aniqlikda transliteratsiya qiluvchi kutubxona. So‘zlarni lotin alifbosidan kirillga va aksincha o‘girish.
 
 ### [Read in English](https://github.com/diyorbek/lotin-kirill/blob/master/README.md)
 

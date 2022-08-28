@@ -67,7 +67,7 @@ const cyrillicWord = transliterator.toCyrillic("e'lon");
 console.log(cyrillicWord); // -> 'эълон'
 ```
 
-### Text (multiple words) tranliteration:
+### Text (multiple words) transliteration:
 
 `textToLatin(text: string): string`
 
@@ -85,7 +85,7 @@ console.log(cyrillicText); // -> 'Жуда узун лотинча текст.'
 
 ### Exceptional words
 
-You can initialize the transliterator object with exceptional words list:
+You can initialize the transliterator object with an exceptional words list:
 
 ```js
 import Transliterator from 'lotin-kirill';
@@ -125,7 +125,7 @@ const latinWord = transliterator.toLatin('октябрда');
 console.log(latinWord); // -> 'oktabrda' (not 'oktyabrda')
 ```
 
-You can extend the exceptionals list after initialization of the transliterator.
+You can extend the exceptionals list after the initialization of the transliterator.
 
 ```js
 transliterator.extendExceptionals([['nol', 'ноль']]);
@@ -137,7 +137,7 @@ Or purge all of the exceptionals added to transliterator.
 transliterator.purgeExceptionals();
 ```
 
-### Pure trasnliterator functions
+### Pure transliterator functions
 
 There are pure transliterator functions which operate only on basic transliteration rules. These functions don't look up words in exceptionals list.
 
