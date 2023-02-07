@@ -1,4 +1,8 @@
-import { CYRILLIC_CHARACTER, CYRILLIC_CHARACTERS } from './characters';
+import {
+  APOSTROPHE,
+  CYRILLIC_CHARACTER,
+  CYRILLIC_CHARACTERS,
+} from './characters';
 import { capitalize, isLetter, isLowerCase, normalizeCase } from './utils';
 
 function normalizeBigramCasing(
@@ -45,18 +49,25 @@ function replaceSpecials(word: string) {
   );
 
   return word
-    .replace(/[ьъ]е/gi, (str) => normalizeCase('ye', str.charAt(1)))
+    .replace(/[ьъ]е/gi, (matchStr) => normalizeCase('ye', matchStr.charAt(1)))
     .replace(
       /[аоэеиуўёюяaeiou]е/gi,
-      (str) => str.charAt(0) + normalizeCase('ye', str.charAt(1)),
+      (matchStr) =>
+        matchStr.charAt(0) + normalizeCase('ye', matchStr.charAt(1)),
     )
-    .replace(/ьо/gi, (matchString) =>
-      normalizeCase('yo', matchString.charAt(1)),
-    )
-    .replace(/[ўғ]ъ/gi, (matchString) => matchString.charAt(0))
+    .replace(/ьо/gi, (matchStr) => normalizeCase('yo', matchStr.charAt(1)))
+    .replace(/[ўғ]ъ/gi, (matchStr) => matchStr.charAt(0))
     .replace(
       /[аоэеиуўёюяaeiou]ц/gi,
-      (str) => str.charAt(0) + normalizeCase('ts', str.charAt(1)),
+      (matchStr) =>
+        matchStr.charAt(0) + normalizeCase('ts', matchStr.charAt(1)),
+    )
+    .replace(
+      /сҳ/gi,
+      (matchStr) =>
+        normalizeCase('s', matchStr.charAt(0)) +
+        APOSTROPHE +
+        normalizeCase('h', matchStr.charAt(1)),
     );
 }
 

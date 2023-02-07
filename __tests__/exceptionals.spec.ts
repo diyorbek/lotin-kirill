@@ -100,4 +100,16 @@ describe('Exceptions', () => {
     expect(t.toCyrillic('(asdefgu)')).toBe('(декьабрь)');
     expect(t.toCyrillic('asdefgularingning')).toBe('декьабрларингнинг');
   });
+
+  test.each`
+    cyrillic | latin
+    ${'СҲ'}  | ${'SʼH'}
+    ${'Сҳ'}  | ${'Sʼh'}
+    ${'сҲ'}  | ${'sʼH'}
+    ${'сҳ'}  | ${'sʼh'}
+  `('$cyrillic => $latin', ({ latin, cyrillic }) => {
+    const t = new Transliterator();
+
+    expect(t.toLatin(cyrillic)).toBe(latin);
+  });
 });
