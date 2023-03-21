@@ -16,7 +16,7 @@ function transliterateApostrophe(word: string) {
 
   return word.replace(/[ʻʼ’'`‘´]/g, (_, index) => {
     // Prioritize assimilation to the next letter
-    const assimilator = word[index + 1] || word[index - 1];
+    const assimilator: string | undefined = word[index + 1] || word[index - 1];
 
     if (assimilator) {
       return normalizeCase(apostrophe, assimilator);

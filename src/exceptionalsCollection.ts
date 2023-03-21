@@ -3,6 +3,8 @@ import {
   endsWithSoftSign,
   escapeRegex,
   isLowerCase,
+  normalizeApostrophe,
+  normalizeTurnedComma,
 } from './utils';
 
 /*
@@ -37,13 +39,26 @@ export class ExceptionalsCollection {
     // TODO: Optimize for duplicates
     exceptions.forEach((pair) => {
       if (pair && pair[0] && pair[1]) {
-        this.collection.push(...this.generateWordCasingVariants(pair));
+        const normalizedPair = this.normalizeCharactersForLatin(pair);
+        this.collection.push(
+          ...this.generateWordCasingVariants(normalizedPair),
+        );
+      } else {
+        throw new Error(`Invalid exceptional pair ${pair}`);
       }
     });
   }
 
   purge(): void {
     this.collection = [];
+  }
+
+  private normalizeCharactersForLatin([
+    latin,
+    cyrillic,
+  ]: ExceptionalPair): ExceptionalPair {
+    const normalizedLatin = normalizeTurnedComma(normalizeApostrophe(latin));
+    return [normalizedLatin, cyrillic];
   }
 
   private generateWordCasingVariants([

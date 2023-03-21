@@ -5,7 +5,12 @@ import {
   TransliterationSource,
 } from './exceptionalsCollection';
 import { latinToCyrillic } from './latin';
-import { isRomanNumber, isURL } from './utils';
+import {
+  isRomanNumber,
+  isURL,
+  normalizeApostrophe,
+  normalizeTurnedComma,
+} from './utils';
 
 export default class Transliterator {
   private exceptionalsCollection = new ExceptionalsCollection();
@@ -43,6 +48,10 @@ export default class Transliterator {
   }
 
   private handleExceptional(word: string, source: TransliterationSource) {
+    if (source === 'latin') {
+      word = normalizeTurnedComma(normalizeApostrophe(word));
+    }
+
     const exceptional = this.exceptionalsCollection.findCase(word, source);
 
     if (exceptional) {

@@ -1,11 +1,11 @@
 import Transliterator from '../src';
+import { APOSTROPHE, TURNED_COMMA } from '../src/characters';
 import { ExceptionalPair } from '../src/exceptionalsCollection';
 import { capitalize } from '../src/utils';
 
 describe('Extending exceptions', () => {
   test('random words', () => {
     const exceptionals: ExceptionalPair[] = [
-      ['', ''],
       ['\\//*^/', '\\///'],
       ['ad\\//as*^/dh', 'mf\\/u?^/pw'],
       ['asdf', 'сдсдфг'],
@@ -26,6 +26,12 @@ describe('Extending exceptions', () => {
       expect(t.toLatin(capitalize(cyrillic))).toBe(capitalize(latin));
       expect(t.toLatin(`${cyrillic}ларнинг`)).toBe(`${latin}larning`);
     });
+  });
+
+  test('Invalid exceptional', () => {
+    expect(() => new Transliterator([['', 'a']])).toThrowError(
+      new Error('Invalid exceptional pair ,a'),
+    );
   });
 });
 
@@ -111,5 +117,44 @@ describe('Exceptions', () => {
     const t = new Transliterator();
 
     expect(t.toLatin(cyrillic)).toBe(latin);
+  });
+
+  test.each`
+    latin    | cyrillic
+    ${'SʼH'} | ${'СҲ'}
+    ${'Sʼh'} | ${'Сҳ'}
+    ${'sʼH'} | ${'сҲ'}
+    ${'sʼh'} | ${'сҳ'}
+    ${"S'H"} | ${'СҲ'}
+    ${"S'h"} | ${'Сҳ'}
+    ${"s'H"} | ${'сҲ'}
+    ${"s'h"} | ${'сҳ'}
+  `('$latin => $cyrillic', ({ latin, cyrillic }) => {
+    const t = new Transliterator();
+
+    expect(t.toCyrillic(latin)).toBe(cyrillic);
+  });
+
+  test('Detect turned comma + apostrope exception', () => {
+    const t = new Transliterator([["lo'bat", 'лўъбат']]);
+
+    expect(t.textToCyrillic('loʻbat')).toBe('лўъбат');
+    expect(t.textToLatin('лўъбат')).toBe(`lo${TURNED_COMMA}bat`);
+    expect(t.textToCyrillic("lo'bat")).toBe('лўъбат');
+  });
+
+  test('Apostroped exceptional', () => {
+    const t = new Transliterator([
+      ["la'bas", 'лaъбaц'], // not a real word
+      ["g'aderb", 'ғадэрб'], // not a real word
+      ["a'metssa", 'аъмецца'], // not a real word
+    ]);
+
+    expect(t.textToCyrillic("g'aderb")).toBe('ғадэрб');
+    expect(t.textToCyrillic("la'bas")).toBe('лaъбaц');
+    expect(t.textToCyrillic("a'metssa")).toBe('аъмецца');
+    expect(t.textToLatin('ғадэрб')).toBe(`g${TURNED_COMMA}aderb`);
+    expect(t.textToLatin('лaъбaц')).toBe(`la${APOSTROPHE}bas`);
+    expect(t.textToLatin('аъмецца')).toBe(`a${APOSTROPHE}metssa`);
   });
 });

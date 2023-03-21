@@ -16,11 +16,13 @@ const t = new Transliterator([
   ['sivilizatsiya', 'цивилизация'],
   ['konferensiya', 'конференция'],
   ['yoga', 'йога'],
+  ['loʻbat', 'лўъбат'],
 
   ['iyun', 'июнь'],
   ['iyul', 'июль'],
   ['oktabr', 'октябрь'],
   ['oktyabr', 'октябрь'],
+  ['dekabr', 'декабрь'],
   ['dekabr', 'декабрь'],
 
   ['U+00D3', 'U+00D3'],
