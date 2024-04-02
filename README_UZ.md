@@ -121,7 +121,7 @@ Istisnoli so‘zlar qo‘shimcha qo‘shilgan holatida ham to‘g‘ri o‘giril
 
 ```js
 // Bu ham ishlaydi
-const latinWord = transliterator.toLatin('октябрда');
+const latinWord = transliterator.toLatin('октябрьда');
 console.log(latinWord); // -> 'oktabrda' ('oktyabrda' emas)
 ```
 

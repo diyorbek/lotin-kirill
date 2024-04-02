@@ -121,7 +121,7 @@ Exceptional words with sufixes are also detected.
 
 ```js
 // This also works
-const latinWord = transliterator.toLatin('октябрда');
+const latinWord = transliterator.toLatin('октябрьда');
 console.log(latinWord); // -> 'oktabrda' (not 'oktyabrda')
 ```
 
