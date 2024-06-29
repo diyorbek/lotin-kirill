@@ -45,6 +45,10 @@ export function endsWithSoftSign(word: string): boolean {
   return /ь$/i.test(word);
 }
 
+export function dropEndSoftSign(word: string): string {
+  return word.replace(/ь$/i, '');
+}
+
 export function isRomanNumber(word: string): boolean {
   return ROMAN_NUMBER_MATCHER.test(word);
 }

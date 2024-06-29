@@ -1,5 +1,6 @@
 import {
   capitalize,
+  dropEndSoftSign,
   endsWithSoftSign,
   escapeRegex,
   isLowerCase,
@@ -85,11 +86,6 @@ export class ExceptionalsCollection {
     };
   }
 
-  private normalizeEndSoftSign(exceptional: ExceptionalCase) {
-    const { replacement } = exceptional;
-    exceptional.replacement = replacement.substring(0, replacement.length - 1);
-  }
-
   private findInCollection(word: string, source: TransliterationSource) {
     let exceptional: ExceptionalCase;
     let alternative: ExceptionalCase | undefined;
@@ -109,13 +105,30 @@ export class ExceptionalsCollection {
       if (word.startsWith(exceptionalWord)) {
         exceptional = { exceptionalWord, replacement };
 
+        // Drop soft sign of exceptional if the source word is latin and has suffix
         if (
           source === 'latin' &&
           endsWithSoftSign(replacement) &&
           word.length !== exceptionalWord.length
         ) {
-          this.normalizeEndSoftSign(exceptional);
+          exceptional.replacement = dropEndSoftSign(replacement);
         }
+
+        return { exceptional };
+      }
+
+      // Check for exceptional case where the source word is cyrillic with suffix
+      // and its soft sign is dropped
+      if (
+        source === 'cyrillic' &&
+        endsWithSoftSign(exceptionalWord) &&
+        word.length !== exceptionalWord.length &&
+        word.startsWith(dropEndSoftSign(exceptionalWord))
+      ) {
+        exceptional = {
+          exceptionalWord: dropEndSoftSign(exceptionalWord),
+          replacement,
+        };
 
         return { exceptional };
       }
