@@ -100,11 +100,24 @@ describe('Exceptions', () => {
 
     expect(t.toCyrillic('oktabr')).toBe('октябрь');
     expect(t.toCyrillic('oktabrda')).toBe('октябрда');
+    expect(t.toCyrillic('Oktabrda')).toBe('Октябрда');
+    expect(t.toCyrillic('OKTABRDAGI')).toBe('ОКТЯБРДАГИ');
     expect(t.toCyrillic('dekabr')).toBe('декабрь');
     expect(t.toCyrillic('dekabrda')).toBe('декабрда');
     expect(t.toCyrillic('asdefgu')).toBe('декьабрь');
     expect(t.toCyrillic('(asdefgu)')).toBe('(декьабрь)');
     expect(t.toCyrillic('asdefgularingning')).toBe('декьабрларингнинг');
+
+    expect(t.toLatin('октябрь')).toBe('oktabr');
+    expect(t.toLatin('октябрда')).toBe('oktabrda');
+    expect(t.toLatin('Октябрда')).toBe('Oktabrda');
+    expect(t.toLatin('ОКТЯБРДАГИ')).toBe('OKTABRDAGI');
+    expect(t.toLatin('октябрда')).toBe('oktabrda');
+    expect(t.toLatin('декабрь')).toBe('dekabr');
+    expect(t.toLatin('декабрда')).toBe('dekabrda');
+    expect(t.toLatin('декьабрь')).toBe('asdefgu');
+    expect(t.toLatin('(декьабрь)')).toBe('(asdefgu)');
+    expect(t.toLatin('декьабрларингнинг')).toBe('asdefgularingning');
   });
 
   test.each`
