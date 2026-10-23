@@ -6,7 +6,6 @@ describe('E cases', () => {
   test.each`
     cyrillic   | latin
     ${'дае'}   | ${'daye'}
-    ${'даЕ'}   | ${'daYE'}
     ${'дАе'}   | ${'dAye'}
     ${'дое'}   | ${'doye'}
     ${'дэе'}   | ${'deye'}
@@ -28,17 +27,19 @@ describe('E cases', () => {
   });
 
   test.each`
-    cyrillic | latin
-    ${'Е'}   | ${'Ye'}
-    ${'е'}   | ${'ye'}
-    ${'е'}   | ${'ye'}
-    ${'ЕД'}  | ${'YED'}
-    ${'ДЕ'}  | ${'DE'}
-    ${'ДЬЕ'} | ${'DYE'}
-    ${'ДЪЕ'} | ${'DYE'}
-    ${'Ед'}  | ${'Yed'}
-    ${'дьЕ'} | ${'dYE'}
-    ${'дъЕ'} | ${'dYE'}
+    cyrillic    | latin
+    ${'Е'}      | ${'Ye'}
+    ${'е'}      | ${'ye'}
+    ${'е'}      | ${'ye'}
+    ${'ЕД'}     | ${'YED'}
+    ${'ДЕ'}     | ${'DE'}
+    ${'ДЬЕ'}    | ${'DYE'}
+    ${'ДЪЕ'}    | ${'DYE'}
+    ${'Ед'}     | ${'Yed'}
+    ${'дьЕ'}    | ${'dYE'}
+    ${'дъЕ'}    | ${'dYE'}
+    ${'даЕ'}    | ${'daYE'}
+    ${'даЕдаЕ'} | ${'daYedaYE'}
   `('$cyrillic => $latin', ({ cyrillic, latin }) => {
     expect(t.toLatin(cyrillic)).toBe(latin);
   });
@@ -156,7 +157,7 @@ describe('Ц cases', () => {
     ${'пицца'} | ${'pitssa'}
     ${'iцц'}   | ${'itss'}
     ${'iцЦ'}   | ${'itsS'}
-    ${'aЦц'}   | ${'aTSs'}
+    ${'aЦц'}   | ${'aTss'}
     ${'aЦЦ'}   | ${'aTSS'}
   `('$cyrillic => $latin', ({ cyrillic, latin }) => {
     expect(t.toLatin(cyrillic)).toBe(latin);
