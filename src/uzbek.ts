@@ -1,11 +1,4 @@
-import {
-  chain,
-  Definition,
-  Exceptions,
-  Pair,
-  Transliterate,
-  Transliteration,
-} from './engine';
+import { chain, Definition, Transliteration } from './engine';
 
 export const APOSTROPHE = 'ʼ'; // U+02BC
 export const TURNED_COMMA = '‘'; // U+2018, what the library outputs after o and g
@@ -133,21 +126,43 @@ export const NEW_LATIN_TO_LATIN: Definition = {
   skip: [ROMAN_NUMBER],
 };
 
+/** A word that doesn't follow the rules, spelled in at least two alphabets. */
+export type ExceptionalWord =
+  | { latin: string; cyrillic: string; newLatin?: string }
+  | { latin: string; newLatin: string; cyrillic?: string }
+  | { cyrillic: string; newLatin: string; latin?: string };
+
 export interface Uzbek {
-  latinToCyrillic: Transliteration;
-  cyrillicToLatin: Transliteration;
-  latinToNewLatin: Transliteration;
-  newLatinToLatin: Transliteration;
-  newLatinToCyrillic: Transliterate;
-  cyrillicToNewLatin: Transliterate;
+  latinToCyrillic(text: string): string;
+  cyrillicToLatin(text: string): string;
+  latinToNewLatin(text: string): string;
+  newLatinToLatin(text: string): string;
+  newLatinToCyrillic(text: string): string;
+  cyrillicToNewLatin(text: string): string;
+  addExceptions(words: ExceptionalWord[]): void;
+  clearExceptions(): void;
 }
+
+// How the library writes Latin: ʼ, except o‘ and g‘
+const libraryLatin = (latin: string): string =>
+  unifyApostrophes(latin).replace(/([og])ʼ/gi, `$1${TURNED_COMMA}`);
 
 // The current Latin script is the hub: New Latin ⇄ Latin ⇄ Cyrillic
 export function createUzbek(): Uzbek {
-  const latinToCyrillic = new Transliteration(LATIN_TO_CYRILLIC);
-  const cyrillicToLatin = new Transliteration(CYRILLIC_TO_LATIN);
-  const latinToNewLatin = new Transliteration(LATIN_TO_NEW_LATIN);
-  const newLatinToLatin = new Transliteration(NEW_LATIN_TO_LATIN);
+  const edges = {
+    latinToCyrillic: new Transliteration(LATIN_TO_CYRILLIC),
+    cyrillicToLatin: new Transliteration(CYRILLIC_TO_LATIN),
+    latinToNewLatin: new Transliteration(LATIN_TO_NEW_LATIN),
+    newLatinToLatin: new Transliteration(NEW_LATIN_TO_LATIN),
+  };
+  const latinToCyrillic = (text: string) =>
+    edges.latinToCyrillic.transliterate(text);
+  const cyrillicToLatin = (text: string) =>
+    edges.cyrillicToLatin.transliterate(text);
+  const latinToNewLatin = (text: string) =>
+    edges.latinToNewLatin.transliterate(text);
+  const newLatinToLatin = (text: string) =>
+    edges.newLatinToLatin.transliterate(text);
 
   return {
     latinToCyrillic,
@@ -156,33 +171,45 @@ export function createUzbek(): Uzbek {
     newLatinToLatin,
     newLatinToCyrillic: chain(newLatinToLatin, latinToCyrillic),
     cyrillicToNewLatin: chain(cyrillicToLatin, latinToNewLatin),
+
+    // Each word becomes exceptions on the edges to and from Latin
+    addExceptions(words: ExceptionalWord[]): void {
+      for (const word of words) {
+        const { cyrillic, newLatin } = word;
+        if ([word.latin, cyrillic, newLatin].filter(Boolean).length < 2) {
+          throw new Error(`Invalid exceptional word ${JSON.stringify(word)}`);
+        }
+
+        // Every path goes through Latin, so a missing Latin spelling comes from the rules
+        const latin = word.latin || newLatinToLatin(newLatin as string);
+        const latinOut = libraryLatin(latin);
+
+        if (cyrillic) {
+          const stem = cyrillic.replace(/ь$/i, ''); // октябрь, but октябрда
+          edges.latinToCyrillic.addExceptions({
+            words: [[latin, cyrillic]],
+            stems: [[latin, stem]],
+          });
+          edges.cyrillicToLatin.addExceptions({
+            words: [[cyrillic, latinOut]],
+            stems: [
+              [cyrillic, latinOut],
+              [stem, latinOut],
+            ],
+          });
+        }
+
+        if (newLatin) {
+          edges.latinToNewLatin.addExceptions({ stems: [[latin, newLatin]] });
+          edges.newLatinToLatin.addExceptions({
+            stems: [[newLatin, latinOut]],
+          });
+        }
+      }
+    },
+
+    clearExceptions(): void {
+      Object.values(edges).forEach((edge) => edge.clearExceptions());
+    },
   };
-}
-
-/** Turn [latin, cyrillic] pairs into exceptions for both directions. */
-export function exceptionsFromPairs(pairs: Pair[]): {
-  toCyrillic: Exceptions;
-  toLatin: Exceptions;
-} {
-  const toCyrillic = { words: [] as Pair[], stems: [] as Pair[] };
-  const toLatin = { words: [] as Pair[], stems: [] as Pair[] };
-
-  for (const pair of pairs) {
-    if (!pair?.[0] || !pair?.[1]) {
-      throw new Error(`Invalid exceptional pair ${pair}`);
-    }
-
-    const [latin, cyrillic] = pair;
-    const latinOut = unifyApostrophes(latin).replace(
-      /([og])ʼ/gi,
-      `$1${TURNED_COMMA}`,
-    );
-    const stem = cyrillic.replace(/ь$/i, ''); // октябрь, but октябрда
-
-    toCyrillic.words.push([latin, cyrillic]);
-    toCyrillic.stems.push([latin, stem]);
-    toLatin.words.push([cyrillic, latinOut]);
-    toLatin.stems.push([cyrillic, latinOut], [stem, latinOut]);
-  }
-  return { toCyrillic, toLatin };
 }

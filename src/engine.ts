@@ -31,10 +31,6 @@ export interface Definition extends Exceptions {
   normalize?: (word: string) => string;
 }
 
-export interface Transliterate {
-  transliterate(text: string): string;
-}
-
 const DEFAULT_WORD = /[\p{L}\p{M}ʻʼ’'`‘´]+/u;
 const URL_HINT = /[.:@/]/;
 
@@ -139,7 +135,7 @@ class Lexicon {
   }
 }
 
-export class Transliteration implements Transliterate {
+export class Transliteration {
   private normalize: (word: string) => string;
   private letters: Map<string, string>;
   private longestLetter: number;
@@ -284,9 +280,8 @@ export class Transliteration implements Transliterate {
 }
 
 /** Run several transliterations one after another, e.g. through a hub script. */
-export function chain(...steps: Transliterate[]): Transliterate {
-  return {
-    transliterate: (text) =>
-      steps.reduce((t, step) => step.transliterate(t), text),
-  };
+export function chain(
+  ...steps: Array<(text: string) => string>
+): (text: string) => string {
+  return (text) => steps.reduce((t, step) => step(t), text);
 }

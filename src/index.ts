@@ -1,4 +1,4 @@
-import { createUzbek, exceptionsFromPairs } from './uzbek';
+import { createUzbek } from './uzbek';
 
 export type ExceptionalPair = [latin: string, cyrillic: string];
 
@@ -10,14 +10,18 @@ export default class Transliterator {
   }
 
   extendExceptionals(exceptions: ExceptionalPair[]): void {
-    const { toCyrillic, toLatin } = exceptionsFromPairs(exceptions);
-    this.uzbek.latinToCyrillic.addExceptions(toCyrillic);
-    this.uzbek.cyrillicToLatin.addExceptions(toLatin);
+    this.uzbek.addExceptions(
+      exceptions.map((pair) => {
+        if (!pair?.[0] || !pair?.[1]) {
+          throw new Error(`Invalid exceptional pair ${pair}`);
+        }
+        return { latin: pair[0], cyrillic: pair[1] };
+      }),
+    );
   }
 
   purgeExceptionals(): void {
-    this.uzbek.latinToCyrillic.clearExceptions();
-    this.uzbek.cyrillicToLatin.clearExceptions();
+    this.uzbek.clearExceptions();
   }
 
   toCyrillic(word: string): string;
@@ -41,20 +45,20 @@ export default class Transliterator {
   }
 
   textToCyrillic(text: string): string {
-    return this.uzbek.latinToCyrillic.transliterate(text);
+    return this.uzbek.latinToCyrillic(text);
   }
 
   textToLatin(text: string): string {
-    return this.uzbek.cyrillicToLatin.transliterate(text);
+    return this.uzbek.cyrillicToLatin(text);
   }
 }
 
 const defaults = createUzbek();
 
 export function latinToCyrillic(word: string): string {
-  return defaults.latinToCyrillic.transliterate(word);
+  return defaults.latinToCyrillic(word);
 }
 
 export function cyrillicToLatin(word: string): string {
-  return defaults.cyrillicToLatin.transliterate(word);
+  return defaults.cyrillicToLatin(word);
 }
