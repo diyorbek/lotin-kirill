@@ -1,5 +1,3 @@
-import anchorme from 'anchorme';
-
 /**
  * A context rule: [pattern, replacement].
  * Patterns are matched against the lowercased original word, so lookbehind and
@@ -23,8 +21,8 @@ export interface Definition extends Exceptions {
   letters: Record<string, string>;
   /** Checked before `letters`; the first rule that matches at a position wins. */
   rules?: Rule[];
-  /** Tokens to leave as they are. URLs are always left as they are. */
-  skip?: RegExp[];
+  /** Tokens to leave as they are, e.g. Roman numerals or URLs. */
+  skip?: Array<RegExp | ((token: string) => boolean)>;
   /** What a word is. Default: letters, combining marks and apostrophes. */
   word?: RegExp;
   /** Clean-up of the lowercased word before matching. Must keep the length. */
@@ -32,13 +30,10 @@ export interface Definition extends Exceptions {
 }
 
 const DEFAULT_WORD = /[\p{L}\p{M}ʻʼ’'`‘´]+/u;
-const URL_HINT = /[.:@/]/;
 
 const hasCase = (c: string) => c.toLowerCase() !== c.toUpperCase();
 const isUpper = (c?: string) => c !== undefined && c !== c.toLowerCase();
 const isCasedLetter = (c?: string) => c !== undefined && hasCase(c);
-const isURL = (token: string) =>
-  URL_HINT.test(token) && anchorme.list(token).length > 0;
 
 function capitalize(s: string): string {
   for (let i = 0; i < s.length; i++) {
@@ -152,7 +147,7 @@ export class Transliteration {
   private letters: Map<string, string>;
   private longestLetter: number;
   private rules: Rule[];
-  private skip: RegExp[];
+  private skip: Array<(token: string) => boolean>;
   private word: RegExp;
   private isWord: RegExp;
   private wordExceptions = new Lexicon();
@@ -175,9 +170,11 @@ export class Transliteration {
       new RegExp(re.source, flags(re, 'g')),
       to,
     ]);
-    this.skip = (definition.skip ?? []).map(
-      (re) => new RegExp(re.source, flags(re)),
-    );
+    this.skip = (definition.skip ?? []).map((skip) => {
+      if (typeof skip === 'function') return skip;
+      const re = new RegExp(skip.source, flags(skip));
+      return (token) => re.test(token);
+    });
     this.word = new RegExp(word.source, flags(word, 'g'));
     this.isWord = new RegExp(`^(?:${word.source})$`, flags(word));
     this.addExceptions(definition);
@@ -208,7 +205,7 @@ export class Transliteration {
   }
 
   private transliterateToken(token: string) {
-    if (this.skip.some((re) => re.test(token)) || isURL(token)) return token;
+    if (this.skip.some((skip) => skip(token))) return token;
 
     const found = this.tokenExceptions.find(this.prepare(token));
     if (found) {

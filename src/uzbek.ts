@@ -1,4 +1,5 @@
 import { chain, Definition, Transliteration } from './engine';
+import { isURL } from './url';
 
 export const APOSTROPHE = 'ʼ'; // U+02BC
 export const TURNED_COMMA = '‘'; // U+2018, what the library outputs after o and g
@@ -54,7 +55,7 @@ export const LATIN_TO_CYRILLIC: Definition = {
     [/(?<=s)ʼ(?=h)/, ''], // sʼh is с + ҳ, not ш
   ],
   normalize: unifyApostrophes,
-  skip: [ROMAN_NUMBER],
+  skip: [ROMAN_NUMBER, isURL],
 };
 
 export const CYRILLIC_TO_LATIN: Definition = {
@@ -104,7 +105,7 @@ export const CYRILLIC_TO_LATIN: Definition = {
     [new RegExp(`(?<=[${VOWELS}aeiou])ц`), 'ts'], // Latin vowels too: some tests mix scripts
     [/(?<=с)ҳ/, `${APOSTROPHE}h`], // сҳ → sʼh, not sh
   ],
-  skip: [ROMAN_NUMBER],
+  skip: [ROMAN_NUMBER, isURL],
 };
 
 // The 2026 alphabet replaces sh, ch, oʻ, gʻ with ş, ç, ö, ğ
@@ -112,7 +113,7 @@ export const LATIN_TO_NEW_LATIN: Definition = {
   letters: { sh: 'ş', ch: 'ç', oʼ: 'ö', gʼ: 'ğ' },
   rules: [[/(?<=s)ʼ(?=h)/, '']], // with ş, s + h no longer needs an apostrophe
   normalize: unifyApostrophes,
-  skip: [ROMAN_NUMBER],
+  skip: [ROMAN_NUMBER, isURL],
 };
 
 export const NEW_LATIN_TO_LATIN: Definition = {
@@ -123,7 +124,7 @@ export const NEW_LATIN_TO_LATIN: Definition = {
     ğ: `g${TURNED_COMMA}`,
   },
   rules: [[/(?<=s)h/, `${APOSTROPHE}h`]], // s + h must not read as sh
-  skip: [ROMAN_NUMBER],
+  skip: [ROMAN_NUMBER, isURL],
 };
 
 /** A word that doesn't follow the rules, spelled in at least two alphabets. */
