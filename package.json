@@ -50,12 +50,12 @@
     "@types/node": "^24.19.2",
     "@vitest/coverage-v8": "^5.0.5",
     "lefthook": "^2.2.2",
-    "np": "^7.5.0",
+    "np": "^12.1.1",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
   },
   "dependencies": {
-    "anchorme": "^2.1.2"
+    "anchorme": "^3.0.8"
   }
 }
