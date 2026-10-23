@@ -27,7 +27,7 @@ export default class Transliterator {
   toCyrillic(word: string): string;
   toCyrillic(words: string[]): string[];
   toCyrillic(word: unknown): unknown {
-    if (word instanceof Array) {
+    if (Array.isArray(word)) {
       return word.map((w) => this.textToCyrillic(w));
     } else if (typeof word === 'string') {
       return this.textToCyrillic(word);
@@ -37,7 +37,7 @@ export default class Transliterator {
   toLatin(word: string): string;
   toLatin(words: string[]): string[];
   toLatin(word: unknown): unknown {
-    if (word instanceof Array) {
+    if (Array.isArray(word)) {
       return word.map((w) => this.textToLatin(w));
     } else if (typeof word === 'string') {
       return this.textToLatin(word);

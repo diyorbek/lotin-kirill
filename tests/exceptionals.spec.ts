@@ -1,4 +1,4 @@
-import Transliterator, { ExceptionalPair } from '../src';
+import Transliterator, { type ExceptionalPair } from '../src';
 import { APOSTROPHE, TURNED_COMMA } from '../src/uzbek';
 
 const capitalize = (word: string) =>

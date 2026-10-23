@@ -1,5 +1,5 @@
-import fs from 'fs';
-import { createUzbek, ExceptionalWord } from '../src/uzbek';
+import fs from 'node:fs';
+import { createUzbek, type ExceptionalWord } from '../src/uzbek';
 
 const uzbek = createUzbek();
 

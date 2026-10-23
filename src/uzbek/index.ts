@@ -86,7 +86,7 @@ export function createUzbek(): Uzbek {
     },
 
     clearExceptions(): void {
-      Object.values(edges).forEach((edge) => edge.clearExceptions());
+      for (const edge of Object.values(edges)) edge.clearExceptions();
     },
   };
 }
