@@ -49,7 +49,7 @@
     "@biomejs/biome": "2.6.2",
     "@types/node": "^24.19.2",
     "@vitest/coverage-v8": "^5.0.5",
-    "husky": "^6.0.0",
+    "lefthook": "^2.2.2",
     "np": "^7.5.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",

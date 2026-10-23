@@ -1,0 +1,20 @@
+# Git hooks, installed by `npm install`. See https://lefthook.dev/configuration/
+
+pre-commit:
+  jobs:
+    - name: biome
+      glob: "*.{ts,js,json,yml}"
+      run: npx --no -- biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: typecheck
+      run: npm run typecheck
+    - name: lint
+      run: npm run lint
+    - name: test
+      run: npm test
+    - name: build
+      run: npm run build
