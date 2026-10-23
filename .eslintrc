@@ -2,10 +2,9 @@
   "parser": "@typescript-eslint/parser",
   "extends": [
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
-    "plugin:jest/recommended"
+    "plugin:prettier/recommended"
   ],
-  "plugins": ["prettier", "jest"],
+  "plugins": ["prettier"],
   "parserOptions": {
     "ecmaVersion": 2019,
     "sourceType": "module"
@@ -16,7 +15,10 @@
     "quotes": [
       "error",
       "single",
-      { "avoidEscape": true, "allowTemplateLiterals": true }
+      {
+        "avoidEscape": true,
+        "allowTemplateLiterals": true
+      }
     ],
     "prefer-template": "warn",
     "eqeqeq": "error",
