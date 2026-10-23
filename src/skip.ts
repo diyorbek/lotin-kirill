@@ -1,4 +1,11 @@
-import anchorme from 'anchorme';
+import anchormeModule from 'anchorme';
+
+// anchorme is CommonJS with its API on `exports.default`. Bundlers unwrap that,
+// Node's ESM loader doesn't, so accept both shapes.
+const anchorme =
+  'list' in anchormeModule
+    ? anchormeModule
+    : (anchormeModule as unknown as { default: typeof anchormeModule }).default;
 
 // URLs and emails always contain one of these; a cheap check before anchorme
 const URL_HINT = /[.:@/]/;
