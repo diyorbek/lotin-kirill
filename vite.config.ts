@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
         name: 'lotinKirill',
         formats: umd ? ['umd'] : ['es', 'cjs'],
         fileName: (format) =>
-          ({ es: 'index.js', cjs: 'index.cjs', umd: 'index.umd.js' }[format]),
+          ({ es: 'index.js', cjs: 'index.cjs', umd: 'index.umd.js' })[format],
       },
       emptyOutDir: !umd,
       rolldownOptions: {

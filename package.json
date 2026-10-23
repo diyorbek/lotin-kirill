@@ -37,8 +37,8 @@
   "scripts": {
     "build": "vite build && vite build --mode umd && tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit --skipLibCheck",
-    "format": "prettier --write .",
-    "lint": "eslint . --ext .ts",
+    "format": "biome check --write",
+    "lint": "biome check",
     "test": "vitest run --coverage",
     "preversion": "npm run typecheck && npm run lint",
     "version": "npm run build",
@@ -46,16 +46,10 @@
     "prepublishOnly": "npm run typecheck && npm run lint && npm run build"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^3.0.2",
-    "@typescript-eslint/parser": "^3.0.2",
+    "@biomejs/biome": "2.6.2",
     "@vitest/coverage-v8": "^5.0.5",
-    "eslint": "^7.1.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.3",
     "husky": "^6.0.0",
     "np": "^7.5.0",
-    "prettier": "^2.2.1",
-    "prettier-plugin-organize-imports": "^2.1.0",
     "typescript": "^5.9.3",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
