@@ -1,7 +1,8 @@
-import Transliterator from '../src';
-import { APOSTROPHE, TURNED_COMMA } from '../src/characters';
-import { ExceptionalPair } from '../src/exceptionalsCollection';
-import { capitalize } from '../src/utils';
+import Transliterator, { ExceptionalPair } from '../src';
+import { APOSTROPHE, TURNED_COMMA } from '../src/uzbek';
+
+const capitalize = (word: string) =>
+  word.charAt(0).toUpperCase() + word.substring(1).toLowerCase();
 
 describe('Extending exceptions', () => {
   test('random words', () => {

@@ -78,13 +78,14 @@ describe('Ч cases', () => {
 
 describe('Ш cases', () => {
   test.each`
-    cyrillic | latin
-    ${'Ш'}   | ${'Sh'}
-    ${'ш'}   | ${'sh'}
-    ${'ША'}  | ${'SHA'}
-    ${'АШ'}  | ${'ASH'}
-    ${'Ша'}  | ${'Sha'}
-    ${'аШ'}  | ${'aSH'}
+    cyrillic          | latin
+    ${'Ш'}            | ${'Sh'}
+    ${'ш'}            | ${'sh'}
+    ${'ША'}           | ${'SHA'}
+    ${'АШ'}           | ${'ASH'}
+    ${'Ша'}           | ${'Sha'}
+    ${'аШ'}           | ${'aSH'}
+    ${'ТошкентШаҳар'} | ${'ToshkentShahar'}
   `('$cyrillic => $latin', ({ cyrillic, latin }) => {
     expect(t.toLatin(cyrillic)).toBe(latin);
   });
