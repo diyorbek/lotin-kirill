@@ -1,4 +1,11 @@
-import { Definition, Exceptions, Pair, Transliteration } from './engine';
+import {
+  chain,
+  Definition,
+  Exceptions,
+  Pair,
+  Transliterate,
+  Transliteration,
+} from './engine';
 
 export const APOSTROPHE = 'ʼ'; // U+02BC
 export const TURNED_COMMA = '‘'; // U+2018, what the library outputs after o and g
@@ -107,15 +114,48 @@ export const CYRILLIC_TO_LATIN: Definition = {
   skip: [ROMAN_NUMBER],
 };
 
+// The 2026 alphabet replaces sh, ch, oʻ, gʻ with ş, ç, ö, ğ
+export const LATIN_TO_NEW_LATIN: Definition = {
+  letters: { sh: 'ş', ch: 'ç', oʼ: 'ö', gʼ: 'ğ' },
+  rules: [[/(?<=s)ʼ(?=h)/, '']], // with ş, s + h no longer needs an apostrophe
+  normalize: unifyApostrophes,
+  skip: [ROMAN_NUMBER],
+};
+
+export const NEW_LATIN_TO_LATIN: Definition = {
+  letters: {
+    ş: 'sh',
+    ç: 'ch',
+    ö: `o${TURNED_COMMA}`,
+    ğ: `g${TURNED_COMMA}`,
+  },
+  rules: [[/(?<=s)h/, `${APOSTROPHE}h`]], // s + h must not read as sh
+  skip: [ROMAN_NUMBER],
+};
+
 export interface Uzbek {
   latinToCyrillic: Transliteration;
   cyrillicToLatin: Transliteration;
+  latinToNewLatin: Transliteration;
+  newLatinToLatin: Transliteration;
+  newLatinToCyrillic: Transliterate;
+  cyrillicToNewLatin: Transliterate;
 }
 
+// The current Latin script is the hub: New Latin ⇄ Latin ⇄ Cyrillic
 export function createUzbek(): Uzbek {
+  const latinToCyrillic = new Transliteration(LATIN_TO_CYRILLIC);
+  const cyrillicToLatin = new Transliteration(CYRILLIC_TO_LATIN);
+  const latinToNewLatin = new Transliteration(LATIN_TO_NEW_LATIN);
+  const newLatinToLatin = new Transliteration(NEW_LATIN_TO_LATIN);
+
   return {
-    latinToCyrillic: new Transliteration(LATIN_TO_CYRILLIC),
-    cyrillicToLatin: new Transliteration(CYRILLIC_TO_LATIN),
+    latinToCyrillic,
+    cyrillicToLatin,
+    latinToNewLatin,
+    newLatinToLatin,
+    newLatinToCyrillic: chain(newLatinToLatin, latinToCyrillic),
+    cyrillicToNewLatin: chain(cyrillicToLatin, latinToNewLatin),
   };
 }
 
