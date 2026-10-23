@@ -3,7 +3,7 @@ import { LATIN_TO_CYRILLIC } from '../src/uzbek';
 
 // Single letters, uppercase then lowercase: A, a, B, b, …
 const LATIN_CHARACTERS = Object.fromEntries(
-  Object.entries(LATIN_TO_CYRILLIC.letters)
+  LATIN_TO_CYRILLIC.letters
     .filter(([latin]) => /^[a-z]$/.test(latin))
     .flatMap(([latin, cyrillic]) => [
       [latin.toUpperCase(), cyrillic.toUpperCase()],

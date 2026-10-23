@@ -17,8 +17,8 @@ export interface Exceptions {
 }
 
 export interface Definition extends Exceptions {
-  /** Letters and letter groups, lowercase. The longest match wins. */
-  letters: Record<string, string>;
+  /** Letters and letter groups, lowercase. The longest match wins; a later duplicate overrides. */
+  letters: Pair[];
   /** Checked before `letters`; the first rule that matches at a position wins. */
   rules?: Rule[];
   /** Tokens to leave as they are, e.g. Roman numerals or URLs. */

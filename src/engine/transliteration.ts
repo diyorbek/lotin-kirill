@@ -22,7 +22,7 @@ export class Transliteration {
 
     this.normalize = definition.normalize ?? ((w) => w);
     this.letters = new Map(
-      Object.entries(definition.letters).map(([k, v]) => [this.prepare(k), v]),
+      definition.letters.map(([k, v]) => [this.prepare(k), v]),
     );
     this.longestLetter = Math.max(
       0,
