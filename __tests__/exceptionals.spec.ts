@@ -170,4 +170,20 @@ describe('Exceptions', () => {
     expect(t.textToLatin('лaъбaц')).toBe(`la${APOSTROPHE}bas`);
     expect(t.textToLatin('аъмецца')).toBe(`a${APOSTROPHE}metssa`);
   });
+
+  test.only('Custom alphabet with unidirectional cyrillic letters', () => {
+    const exceptionals: ExceptionalPair[] = [
+      ['i', 'ы'],
+      ['a', 'ә'],
+      ['u', 'ү'],
+      ['ng', 'ӊ'],
+    ];
+    const t = new Transliterator(exceptionals);
+
+    console.log({
+      cyrillic: 'ыәүӊ',
+      latin: t.textToLatin('ыәүӊ'),
+    });
+    expect(t.textToLatin('ыәүӊ')).toBe('iауng');
+  });
 });

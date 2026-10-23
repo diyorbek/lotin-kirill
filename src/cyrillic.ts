@@ -1,6 +1,6 @@
 import {
   APOSTROPHE,
-  CYRILLIC_CHARACTER,
+  type CYRILLIC_CHARACTER,
   CYRILLIC_CHARACTERS,
 } from './characters';
 import { capitalize, isLetter, isLowerCase, normalizeCase } from './utils';
