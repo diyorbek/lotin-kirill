@@ -59,35 +59,47 @@ function lower(s: string): string {
   }).join('');
 }
 
-/** Case `out` like the source characters `word[s..e)` it replaces. */
-function caseLikeSource(out: string, word: string, s: number, e: number) {
-  if (!out) return out;
-  const src = word.slice(s, e);
-  const cased = Array.from(src).filter(hasCase);
+/** Put the original capitals back on the lowercase replacement for `word[start..end)`. */
+function restoreLetterCase(
+  replacement: string,
+  word: string,
+  start: number,
+  end: number,
+) {
+  if (!replacement) return replacement;
+  const source = word.slice(start, end);
+  const cased = Array.from(source).filter(hasCase);
 
   // Nothing to copy (e.g. an apostrophe): follow the next character, else the previous
   if (!cased.length) {
-    return isUpper(word[e] ?? word[s - 1]) ? out.toUpperCase() : out;
+    return isUpper(word[end] ?? word[start - 1])
+      ? replacement.toUpperCase()
+      : replacement;
   }
-  if (!cased.some(isUpper)) return out;
+  if (!cased.some(isUpper)) return replacement;
 
   // Same length: copy the case letter by letter (ee → еэ, eE → еЭ)
-  if (src.length > 1 && src.length === out.length) {
-    return Array.from(out, (c, i) =>
-      isUpper(src[i]) ? c.toUpperCase() : c,
+  if (source.length > 1 && source.length === replacement.length) {
+    return Array.from(replacement, (c, i) =>
+      isUpper(source[i]) ? c.toUpperCase() : c,
     ).join('');
   }
-  if (src.length > 1) {
-    if (cased.every(isUpper)) return out.toUpperCase();
-    return isUpper(cased[0]) ? capitalize(out) : out;
+  if (source.length > 1) {
+    if (cased.every(isUpper)) return replacement.toUpperCase();
+    return isUpper(cased[0]) ? capitalize(replacement) : replacement;
   }
 
   // One capital becoming several letters (Ш → sh): SH inside an uppercase word, Sh otherwise
-  if (Array.from(out).filter(hasCase).length < 2) return out.toUpperCase();
-  const next = word[e];
-  if (isCasedLetter(next))
-    return isUpper(next) ? out.toUpperCase() : capitalize(out);
-  return isCasedLetter(word[s - 1]) ? out.toUpperCase() : capitalize(out);
+  if (Array.from(replacement).filter(hasCase).length < 2) {
+    return replacement.toUpperCase();
+  }
+  const next = word[end];
+  if (isCasedLetter(next)) {
+    return isUpper(next) ? replacement.toUpperCase() : capitalize(replacement);
+  }
+  return isCasedLetter(word[start - 1])
+    ? replacement.toUpperCase()
+    : capitalize(replacement);
 }
 
 interface Entry {
@@ -96,10 +108,10 @@ interface Entry {
   lower: string;
 }
 
-/** Case an exception like the word it replaces: as written, lower, UPPER or Capitalized. */
-function caseLikeWord(entry: Entry, src: string) {
-  if (src === entry.key) return entry.target;
-  const cased = Array.from(src).filter(hasCase);
+/** Put the original capitals back on an exception: as written, lower, UPPER or Capitalized. */
+function restoreWordCase(entry: Entry, source: string) {
+  if (source === entry.key) return entry.target;
+  const cased = Array.from(source).filter(hasCase);
   if (cased.length && cased.every(isUpper)) return entry.lower.toUpperCase();
   return isUpper(cased[0]) ? capitalize(entry.lower) : entry.lower;
 }
@@ -202,7 +214,7 @@ export class Transliteration {
     if (found) {
       const [entry, n] = found;
       return (
-        caseLikeWord(entry, token.slice(0, n)) +
+        restoreWordCase(entry, token.slice(0, n)) +
         this.transliterateWords(token.slice(n))
       );
     }
@@ -220,7 +232,7 @@ export class Transliteration {
 
     const found = this.wordExceptions.find(src);
     if (found) {
-      out = caseLikeWord(found[0], word.slice(0, found[1]));
+      out = restoreWordCase(found[0], word.slice(0, found[1]));
       i = found[1];
     }
 
@@ -243,7 +255,7 @@ export class Transliteration {
       if (to === undefined) {
         out += word[i++]; // unknown character: keep it
       } else {
-        out += caseLikeSource(to, word, i, i + n);
+        out += restoreLetterCase(to, word, i, i + n);
         i += n;
       }
     }
