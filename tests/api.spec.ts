@@ -35,6 +35,13 @@ describe('API', () => {
     expect(() => transliterator.transliterate('Салом', unknownTo)).toThrowError(
       new Error('Unknown alphabet: newLatin'),
     );
+
+    // 'auto' only works as a source
+    const autoTo = { from: 'cyrillic', to: 'auto' } as unknown as Direction;
+
+    expect(() => transliterator.transliterate('Салом', autoTo)).toThrowError(
+      new Error('Unknown alphabet: auto'),
+    );
   });
 
   test('exceptions given to createTransliterator are used', () => {
