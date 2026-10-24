@@ -45,6 +45,7 @@ export const LATIN1995_TO_CYRILLIC: Definition = {
   ],
   rules: [
     [/^e/, 'э'],
+    [/(?<=[aiouʼ])e/, 'э'], // poeziya → поэзия, beʼetibor → беъэтибор; ee is a letter pair
     [/ts(?=i(on|ya))/, 'ц'], // motivatsiya → мотивация
     [/(?<=s)ʼ(?=h)/, ''], // sʼh is с + ҳ, not ш
   ],
