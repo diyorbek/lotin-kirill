@@ -34,11 +34,15 @@ export class Lexicon {
       return [exact, word.length];
     }
 
-    for (let n = Math.min(word.length, this.longestStem); n > 0; n--) {
-      const stem = this.stems.get(word.slice(0, n));
+    for (
+      let length = Math.min(word.length, this.longestStem);
+      length > 0;
+      length--
+    ) {
+      const stem = this.stems.get(word.slice(0, length));
 
       if (stem) {
-        return [stem, n];
+        return [stem, length];
       }
     }
   }

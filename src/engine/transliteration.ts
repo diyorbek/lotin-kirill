@@ -22,15 +22,18 @@ export class Transliteration {
 
     this.normalize = definition.normalize ?? ((w) => w);
     this.letters = new Map(
-      definition.letters.map(([k, v]) => [this.prepare(k), v]),
+      definition.letters.map(([source, target]) => [
+        this.prepare(source),
+        target,
+      ]),
     );
     this.longestLetter = Math.max(
       0,
-      ...Array.from(this.letters.keys(), (k) => k.length),
+      ...Array.from(this.letters.keys(), (source) => source.length),
     );
-    this.rules = (definition.rules ?? []).map(([re, to]) => [
+    this.rules = (definition.rules ?? []).map(([re, replacement]) => [
       new RegExp(re.source, flags(re, 'g')),
-      to,
+      replacement,
     ]);
     this.skip = (definition.skip ?? []).map((skip) => {
       if (typeof skip === 'function') {
@@ -79,11 +82,11 @@ export class Transliteration {
     const found = this.tokenExceptions.find(this.prepare(token));
 
     if (found) {
-      const [entry, n] = found;
+      const [entry, length] = found;
 
       return (
-        restoreWordCase(entry, token.slice(0, n)) +
-        this.transliterateWords(token.slice(n))
+        restoreWordCase(entry, token.slice(0, length)) +
+        this.transliterateWords(token.slice(length))
       );
     }
 
@@ -95,41 +98,47 @@ export class Transliteration {
   }
 
   private transliterateWord(word: string) {
-    const src = this.prepare(word);
+    const prepared = this.prepare(word);
     let out = '';
     let i = 0;
 
-    const found = this.wordExceptions.find(src);
+    const found = this.wordExceptions.find(prepared);
 
     if (found) {
-      out = restoreWordCase(found[0], word.slice(0, found[1]));
-      i = found[1];
+      const [entry, length] = found;
+
+      out = restoreWordCase(entry, word.slice(0, length));
+      i = length;
     }
 
-    const ruleHits = this.matchRules(src, i);
+    const ruleHits = this.matchRules(prepared, i);
 
-    while (i < src.length) {
-      let n = 0;
-      let to: string | undefined;
+    while (i < prepared.length) {
+      let length = 0;
+      let replacement: string | undefined;
       const hit = ruleHits?.get(i);
 
       if (hit) {
-        [n, to] = hit;
+        [length, replacement] = hit;
       } else {
-        for (n = Math.min(this.longestLetter, src.length - i); n > 0; n--) {
-          to = this.letters.get(src.slice(i, i + n));
+        for (
+          length = Math.min(this.longestLetter, prepared.length - i);
+          length > 0;
+          length--
+        ) {
+          replacement = this.letters.get(prepared.slice(i, i + length));
 
-          if (to !== undefined) {
+          if (replacement !== undefined) {
             break;
           }
         }
       }
 
-      if (to === undefined) {
+      if (replacement === undefined) {
         out += word[i++]; // unknown character: keep it
       } else {
-        out += restoreLetterCase(to, word, i, i + n);
-        i += n;
+        out += restoreLetterCase(replacement, word, i, i + length);
+        i += length;
       }
     }
 
@@ -137,35 +146,37 @@ export class Transliteration {
   }
 
   /** Where rules match: position → [length, replacement]. The first rule wins. */
-  private matchRules(src: string, from: number) {
+  private matchRules(prepared: string, from: number) {
     let hits: Map<number, [number, string]> | undefined;
 
-    for (const [re, to] of this.rules) {
+    for (const [re, replacement] of this.rules) {
       re.lastIndex = from;
 
-      for (let m = re.exec(src); m; m = re.exec(src)) {
-        if (m[0] && !hits?.has(m.index)) {
+      for (let match = re.exec(prepared); match; match = re.exec(prepared)) {
+        if (match[0] && !hits?.has(match.index)) {
           if (!hits) {
             hits = new Map();
           }
 
-          hits.set(m.index, [
-            m[0].length,
-            typeof to === 'function' ? to(m) : to,
+          hits.set(match.index, [
+            match[0].length,
+            typeof replacement === 'function'
+              ? replacement(match)
+              : replacement,
           ]);
         }
 
-        re.lastIndex = m.index + 1; // let matches overlap; the scan decides which apply
+        re.lastIndex = match.index + 1; // let matches overlap; the scan decides which apply
       }
     }
 
     return hits;
   }
 
-  private prepare(s: string) {
-    const prepared = this.normalize(lower(s));
+  private prepare(text: string) {
+    const prepared = this.normalize(lower(text));
 
-    if (prepared.length !== s.length) {
+    if (prepared.length !== text.length) {
       throw new Error('normalize() must not change the length of a word');
     }
 
@@ -177,5 +188,5 @@ export class Transliteration {
 export function chain(
   ...steps: Array<(text: string) => string>
 ): (text: string) => string {
-  return (text) => steps.reduce((t, step) => step(t), text);
+  return (text) => steps.reduce((result, step) => step(result), text);
 }

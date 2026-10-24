@@ -23,10 +23,10 @@ function capitalize(s: string): string {
 
 // Lowercase without changing the length, so positions in the original stay valid
 export function lower(s: string): string {
-  const l = s.toLowerCase();
+  const lowered = s.toLowerCase();
 
-  if (l.length === s.length) {
-    return l;
+  if (lowered.length === s.length) {
+    return lowered;
   }
 
   // Only one character changes length: İ (U+0130) lowercases to "i̇", an i plus

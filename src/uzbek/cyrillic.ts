@@ -92,7 +92,7 @@ export const CYRILLIC_TO_LATIN: Definition = {
   ],
   rules: [
     [/^е/, 'ye'],
-    [/е{3,}/, (m: RegExpExecArray): string => 'e'.repeat(m[0].length)], // a run of 3+ е stays e
+    [/е{3,}/, (match: RegExpExecArray): string => 'e'.repeat(match[0].length)], // a run of 3+ е stays e
     [new RegExp(`(?<=[${VOWELS}ьъ])е`), 'ye'],
     [/(?<=[ўғ])ъ|ъ(?=е)/, ''], // ўъ → o‘, ъе → ye
     [/(?<=ь)о/, 'yo'],
