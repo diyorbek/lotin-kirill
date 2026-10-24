@@ -1,5 +1,6 @@
 import { chain, Transliteration } from '../engine';
 import { CYRILLIC_TO_LATIN1995, LATIN1995_TO_CYRILLIC } from './cyrillic';
+import { detectText, detectWord } from './detect';
 import { libraryLatin } from './latin1995';
 import { LATIN1995_TO_LATIN2026, LATIN2026_TO_LATIN1995 } from './latin2026';
 
@@ -12,7 +13,8 @@ const ALPHABETS = ['latin1995', 'latin2026', 'cyrillic'] as const;
 export type Alphabet = (typeof ALPHABETS)[number];
 
 export interface Direction {
-  from: Alphabet;
+  /** 'auto' detects the alphabet of each word. */
+  from: Alphabet | 'auto';
   to: Alphabet;
 }
 
@@ -24,6 +26,8 @@ export type ExceptionalWord =
 
 export interface Transliterator {
   transliterate(text: string, direction: Direction): string;
+  /** The alphabet a text is written in; undefined if it has no letters. */
+  detect(text: string): Alphabet | undefined;
   addExceptions(words: ExceptionalWord[]): void;
   clearExceptions(): void;
 }
@@ -74,13 +78,27 @@ export function createTransliterator({
 
   const transliterator: Transliterator = {
     transliterate(text: string, { from, to }: Direction): string {
-      for (const alphabet of [from, to]) {
-        if (!ALPHABETS.includes(alphabet)) {
-          throw new Error(`Unknown alphabet: ${alphabet}`);
-        }
+      if (from !== 'auto' && !ALPHABETS.includes(from)) {
+        throw new Error(`Unknown alphabet: ${from}`);
+      }
+
+      if (!ALPHABETS.includes(to)) {
+        throw new Error(`Unknown alphabet: ${to}`);
+      }
+
+      if (from === 'auto') {
+        // Each word through its own alphabet; one that reads the same in both
+        // Latin alphabets goes through latin1995, with the same result
+        return text.replace(/\S+/g, (word) =>
+          paths[detectWord(word) ?? 'latin1995'][to](word),
+        );
       }
 
       return paths[from][to](text);
+    },
+
+    detect(text: string): Alphabet | undefined {
+      return detectText(text);
     },
 
     // Each word becomes exceptions on the edges to and from latin1995

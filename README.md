@@ -52,6 +52,30 @@ The alphabets:
 
 Any direction works, for example `{ from: 'latin2026', to: 'cyrillic' }`.
 
+### Detecting the alphabet
+
+With `from: 'auto'`, each word is transliterated from the alphabet it's written in:
+
+```js
+transliterator.transliterate('Çoy ichdik', { from: 'auto', to: 'cyrillic' }); // -> 'Чой ичдик'
+```
+
+A word shows its alphabet through letters only that alphabet uses: any Cyrillic letter; `ş`, `ç`, `ö`, `ğ` for `latin2026`; `sh`, `ch`, `o‘`, `g‘` for `latin1995`. A word without them, like `kitob`, reads the same in both Latin alphabets. One ambiguity remains: in `latin2026`, `sh` can also be `s` + `h`, so give the source for words like `Ishoq`:
+
+```js
+transliterator.transliterate('Ishoq', { from: 'auto', to: 'cyrillic' }); // -> 'Ишоқ'
+transliterator.transliterate('Ishoq', { from: 'latin2026', to: 'cyrillic' }); // -> 'Исҳоқ'
+```
+
+`detect` tells which alphabet a text is written in, going by the words that show it:
+
+```js
+transliterator.detect('Men bugun kitob öqidim'); // -> 'latin2026'
+transliterator.detect('Салом'); // -> 'cyrillic'
+transliterator.detect('Salom'); // -> 'latin1995', the same in both Latin alphabets
+transliterator.detect('2026'); // -> undefined
+```
+
 CommonJS:
 
 ```js

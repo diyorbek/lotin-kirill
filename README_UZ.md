@@ -52,6 +52,30 @@ Alifbolar:
 
 Istalgan yo‘nalishda o‘girish mumkin, masalan `{ from: 'latin2026', to: 'cyrillic' }`.
 
+### Alifboni aniqlash
+
+`from: 'auto'` berilsa, har bir so‘z o‘zi yozilgan alifbodan o‘giriladi:
+
+```js
+transliterator.transliterate('Çoy ichdik', { from: 'auto', to: 'cyrillic' }); // -> 'Чой ичдик'
+```
+
+So‘z o‘z alifbosini faqat o‘sha alifboda bor harflar orqali ko‘rsatadi: istalgan kirill harfi; `latin2026` uchun `ş`, `ç`, `ö`, `ğ`; `latin1995` uchun `sh`, `ch`, `o‘`, `g‘`. Bunday harflari yo‘q so‘z, masalan `kitob`, ikkala lotin alifbosida bir xil yoziladi. Bitta noaniqlik qoladi: `latin2026` da `sh` `s` + `h` ham bo‘lishi mumkin, shuning uchun `Ishoq` kabi so‘zlar uchun manba alifboni ko‘rsating:
+
+```js
+transliterator.transliterate('Ishoq', { from: 'auto', to: 'cyrillic' }); // -> 'Ишоқ'
+transliterator.transliterate('Ishoq', { from: 'latin2026', to: 'cyrillic' }); // -> 'Исҳоқ'
+```
+
+`detect` matn qaysi alifboda yozilganini, buni ko‘rsatadigan so‘zlar bo‘yicha aniqlaydi:
+
+```js
+transliterator.detect('Men bugun kitob öqidim'); // -> 'latin2026'
+transliterator.detect('Салом'); // -> 'cyrillic'
+transliterator.detect('Salom'); // -> 'latin1995', ikkala lotin alifbosida bir xil
+transliterator.detect('2026'); // -> undefined
+```
+
 CommonJS:
 
 ```js
