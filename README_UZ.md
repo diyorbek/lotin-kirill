@@ -7,7 +7,7 @@
 [![](https://img.shields.io/bundlephobia/minzip/lotin-kirill)](https://bundlephobia.com/result?p=lotin-kirill)
 [![](https://img.shields.io/npm/l/lotin-kirill)](https://npmjs.com/lotin-kirill)
 
-O‘zbek tilidagi so‘zlarni yuqori aniqlikda transliteratsiya qiluvchi kutubxona. So‘zlarni lotin alifbosidan kirillga va aksincha o‘girish.
+O‘zbek tilidagi so‘zlarni yuqori aniqlikda transliteratsiya qiluvchi kutubxona. So‘zlarni 1995 va 2026 yilgi lotin alifbolari hamda kirill alifbosi o‘rtasida o‘girish.
 
 ### [Read in English](https://github.com/diyorbek/lotin-kirill/blob/master/README.md)
 
@@ -33,12 +33,29 @@ UNPKG
 
 ## Foydalanish
 
-Initsializatsiya:
+```js
+import { createTransliterator } from 'lotin-kirill';
+
+const transliterator = createTransliterator();
+
+transliterator.transliterate('Salom', { from: 'latin1995', to: 'cyrillic' }); // -> 'Салом'
+transliterator.transliterate('Тошкент', { from: 'cyrillic', to: 'latin2026' }); // -> 'Toşkent'
+```
+
+Alifbolar:
+
+| Nomi        | Alifbo                                                                    |
+| ----------- | ------------------------------------------------------------------------- |
+| `latin1995` | 1995-yildan beri qo‘llanilayotgan lotin alifbosi (`sh`, `ch`, `o‘`, `g‘`) |
+| `latin2026` | 2026-yilgi lotin alifbosi (`ş`, `ç`, `ö`, `ğ`)                            |
+| `cyrillic`  | kirill alifbosi                                                           |
+
+Istalgan yo‘nalishda o‘girish mumkin, masalan `{ from: 'latin2026', to: 'cyrillic' }`.
+
+CommonJS:
 
 ```js
-import Transliterator from 'lotin-kirill';
-
-const transliterator = new Transliterator();
+const { createTransliterator } = require('lotin-kirill');
 ```
 
 UNPKG orqali ulaganda:
@@ -46,113 +63,65 @@ UNPKG orqali ulaganda:
 ```html
 <script src="https://unpkg.com/lotin-kirill/dist/index.umd.js"></script>
 <script>
-  const Transliterator = lotinKirill.default;
-  const transliterator = new Transliterator();
+  const transliterator = lotinKirill.createTransliterator();
+
+  transliterator.transliterate('Salom', { from: 'latin1995', to: 'cyrillic' }); // -> 'Салом'
 </script>
-```
-
-### So‘zma-so‘z o‘girish:
-
-`toLatin(word: string): string`
-
-`toCyrillic(word: string): string`
-
-Naʼmuna
-
-```js
-const latinWord = transliterator.toLatin('мотивация');
-console.log(latinWord); // -> 'motivatsiya'
-
-const cyrillicWord = transliterator.toCyrillic("e'lon");
-console.log(cyrillicWord); // -> 'эълон'
-```
-
-### Tekstni (bir necha so‘zdan iborat) o‘girish:
-
-`textToLatin(text: string): string`
-
-`textToCyrillic(text: string): string`
-
-Naʼmuna
-
-```js
-const latinText = transliterator.textToLatin('Жуда узун кириллча текст.');
-console.log(latinText); // -> 'Juda uzun kirillcha tekst.'
-
-const cyrillicText = transliterator.textToCyrillic('Juda uzun lotincha tekst.');
-console.log(cyrillicText); // -> 'Жуда узун лотинча текст.'
 ```
 
 ### Istisno so‘zlar
 
-Transliterator obyektini istisno so‘zlar ro‘yhati bilan initsializatsiya qilishingiz mumkin:
+Ba’zi so‘zlar, asosan o‘zlashma so‘zlar, qoidalarga bo‘ysunmaydi. Transliteratorni ularning ro‘yxati bilan yarating. Har bir so‘z kamida ikki alifbodagi yozilishi bilan beriladi:
 
 ```js
-import Transliterator from 'lotin-kirill';
+import { createTransliterator } from 'lotin-kirill';
 
-const transliterator = new Transliterator([
-  // [lotincha, kirillcha]
-  ['oktabr', 'октябрь'],
-  ['Google', 'Google'],
-]);
+const transliterator = createTransliterator({
+  exceptions: [
+    { latin1995: 'oktabr', cyrillic: 'октябрь' },
+    { latin1995: 'Chrome', cyrillic: 'Chrome', latin2026: 'Chrome' },
+  ],
+});
 
-const cyrillicWord = transliterator.toCyrillic('oktabr');
-console.log(cyrillicWord); // -> 'октябрь' ('октабр' emas)
+transliterator.transliterate('oktabr', { from: 'latin1995', to: 'cyrillic' }); // -> 'октябрь' ('октабр' emas)
 ```
 
-Bir istisno juftligi kirill va lotin transliteratsiyasi uchun yetarli.
+Bitta yozuv ikkala yo‘nalish uchun yetarli:
 
 ```js
-// Bu ham ishlaydi
-const latinWord = transliterator.toLatin('октябрь');
-console.log(latinWord); // -> 'oktabr' (not 'oktyabr')
+transliterator.transliterate('октябрь', { from: 'cyrillic', to: 'latin1995' }); // -> 'oktabr' ('oktyabr' emas)
 ```
 
-Agar istisno jusfligi bir xil so‘zlardan iborat bo‘lsa, o‘sha so‘z o‘girilmaydi.
+Ikki alifboda bir xil yoziladigan so‘z ular orasida o‘girilmaydi:
 
 ```js
-const cyrillicWord = transliterator.toCyrillic('Google');
-console.log(cyrillicWord); // -> 'Google'
+transliterator.transliterate('Chrome', { from: 'latin1995', to: 'latin2026' }); // -> 'Chrome' ('Çrome' emas)
 ```
 
-Istisnoli so‘zlar qo‘shimcha qo‘shilgan holatida ham to‘g‘ri o‘giriladi.
+Istisno so‘zlar qo‘shimcha qo‘shilgan holatda ham to‘g‘ri o‘giriladi.
 
-**Faqat old qo'shimchalar bundan mustasno!** So‘zning old qo‘shimcha qo‘shilgan varianti alohida istisno sifatida qo‘shilishi kerak.
+**Faqat old qo‘shimchalar bundan mustasno!** So‘zning old qo‘shimcha qo‘shilgan varianti alohida istisno sifatida qo‘shilishi kerak.
 
 ```js
-// Bu ham ishlaydi
-const latinWord = transliterator.toLatin('октябрда');
-console.log(latinWord); // -> 'oktabrda' ('oktyabrda' emas)
+transliterator.transliterate('октябрда', { from: 'cyrillic', to: 'latin1995' }); // -> 'oktabrda' ('oktyabrda' emas)
 ```
 
-Istisno ro‘yhatini initsializatsiyadan keyin ham kengaytirish mumkin.
+Istisnolarni keyinroq qo‘shish yoki hammasini o‘chirish mumkin:
 
 ```js
-transliterator.extendExceptionals([['nol', 'ноль']]);
+transliterator.addExceptions([{ latin1995: 'nol', cyrillic: 'ноль' }]);
+transliterator.clearExceptions();
 ```
 
-Yoki ro‘yhatni butunlay tozalash mumkin.
+### 0.x versiyadan o‘tish
 
-```js
-transliterator.purgeExceptionals();
-```
-
-### Asl transliteratsiya funksiyalari
-
-Kutubxonada so‘zlarni transliteratsiyaning faqat fundamental qoidalari asosoida ishlovchi asl transliteratsiya funksiyalari mavjud. Bu funksiyalar berilgan so‘zni istisno ro‘yhati bilan solishtirmaydi.
-
-`cyrillicToLatin(word: string): string`
-
-`latinToCyrillic(word: string): string`
-
-```js
-import Transliterator, { cyrillicToLatin, latinToCyrillic } from 'lotin-kirill';
-
-const transliterator = new Transliterator([['oktabr', 'октябрь']]);
-
-console.log(transliterator.toLatin('октябрь')); // -> 'oktabr'
-console.log(cyrillicToLatin('октябрь')); // -> 'oktyabr'
-
-console.log(transliterator.toCyrillic('oktabr')); // -> 'октябрь'
-console.log(latinToCyrillic('oktabr')); // -> 'октабр'
-```
+| 0.x                                              | 1.0                                                                                    |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `new Transliterator([['oktabr', 'октябрь']])`    | `createTransliterator({ exceptions: [{ latin1995: 'oktabr', cyrillic: 'октябрь' }] })` |
+| `t.toCyrillic(text)`, `t.textToCyrillic(text)`   | `t.transliterate(text, { from: 'latin1995', to: 'cyrillic' })`                         |
+| `t.toLatin(text)`, `t.textToLatin(text)`         | `t.transliterate(text, { from: 'cyrillic', to: 'latin1995' })`                         |
+| `t.toCyrillic(['…', '…'])`                       | `words.map((word) => t.transliterate(word, { from, to }))`                             |
+| `t.extendExceptionals(pairs)`                    | `t.addExceptions(words)`                                                               |
+| `t.purgeExceptionals()`                          | `t.clearExceptions()`                                                                  |
+| `latinToCyrillic(word)`, `cyrillicToLatin(word)` | `createTransliterator().transliterate(word, { from, to })`                             |
+| `lotinKirill.default` (UNPKG)                    | `lotinKirill.createTransliterator`                                                     |

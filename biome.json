@@ -5,5 +5,10 @@
   "formatter": { "indentStyle": "space" },
   "javascript": { "formatter": { "quoteStyle": "single" } },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
-  "linter": { "rules": { "preset": "recommended" } }
+  "linter": {
+    "rules": {
+      "preset": "recommended",
+      "style": { "useBlockStatements": "error" }
+    }
+  }
 }

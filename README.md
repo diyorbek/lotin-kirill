@@ -7,7 +7,7 @@
 [![](https://img.shields.io/bundlephobia/minzip/lotin-kirill)](https://bundlephobia.com/result?p=lotin-kirill)
 [![](https://img.shields.io/npm/l/lotin-kirill)](https://npmjs.com/lotin-kirill)
 
-Transliterator for Uzbek words with high accuracy (from latin alphabet to cyrillic and vice versa). Used at [transliterator.uz](https://transliterator.uz/)
+Transliterator for Uzbek text with high accuracy, between the 1995 and 2026 Latin alphabets and Cyrillic. Used at [transliterator.uz](https://transliterator.uz/)
 
 ### [O‘zbek tilida o‘qish](https://github.com/diyorbek/lotin-kirill/blob/master/README_UZ.md)
 
@@ -33,12 +33,29 @@ UNPKG
 
 ## Usage
 
-Initialize the engine:
+```js
+import { createTransliterator } from 'lotin-kirill';
+
+const transliterator = createTransliterator();
+
+transliterator.transliterate('Salom', { from: 'latin1995', to: 'cyrillic' }); // -> 'Салом'
+transliterator.transliterate('Тошкент', { from: 'cyrillic', to: 'latin2026' }); // -> 'Toşkent'
+```
+
+The alphabets:
+
+| Name        | Alphabet                                                      |
+| ----------- | ------------------------------------------------------------- |
+| `latin1995` | the Latin alphabet in use since 1995 (`sh`, `ch`, `o‘`, `g‘`) |
+| `latin2026` | the 2026 Latin alphabet (`ş`, `ç`, `ö`, `ğ`)                  |
+| `cyrillic`  | Cyrillic                                                      |
+
+Any direction works, for example `{ from: 'latin2026', to: 'cyrillic' }`.
+
+CommonJS:
 
 ```js
-import Transliterator from 'lotin-kirill';
-
-const transliterator = new Transliterator();
+const { createTransliterator } = require('lotin-kirill');
 ```
 
 When using UNPKG distribution:
@@ -46,113 +63,65 @@ When using UNPKG distribution:
 ```html
 <script src="https://unpkg.com/lotin-kirill/dist/index.umd.js"></script>
 <script>
-  const Transliterator = lotinKirill.default;
-  const transliterator = new Transliterator();
+  const transliterator = lotinKirill.createTransliterator();
+
+  transliterator.transliterate('Salom', { from: 'latin1995', to: 'cyrillic' }); // -> 'Салом'
 </script>
-```
-
-### Single word transliteration:
-
-`toLatin(word: string): string`
-
-`toCyrillic(word: string): string`
-
-Example
-
-```js
-const latinWord = transliterator.toLatin('мотивация');
-console.log(latinWord); // -> 'motivatsiya'
-
-const cyrillicWord = transliterator.toCyrillic("e'lon");
-console.log(cyrillicWord); // -> 'эълон'
-```
-
-### Text (multiple words) transliteration:
-
-`textToLatin(text: string): string`
-
-`textToCyrillic(text: string): string`
-
-Example
-
-```js
-const latinText = transliterator.textToLatin('Жуда узун кириллча текст.');
-console.log(latinText); // -> 'Juda uzun kirillcha tekst.'
-
-const cyrillicText = transliterator.textToCyrillic('Juda uzun lotincha tekst.');
-console.log(cyrillicText); // -> 'Жуда узун лотинча текст.'
 ```
 
 ### Exceptional words
 
-You can initialize the transliterator object with an exceptional words list:
+Some words, mostly loanwords, don't follow the rules. Create a transliterator with a list of them. Each word gives its spelling in at least two alphabets:
 
 ```js
-import Transliterator from 'lotin-kirill';
+import { createTransliterator } from 'lotin-kirill';
 
-const transliterator = new Transliterator([
-  // [latinWord, cyrillicWord]
-  ['oktabr', 'октябрь'],
-  ['Google', 'Google'],
-]);
+const transliterator = createTransliterator({
+  exceptions: [
+    { latin1995: 'oktabr', cyrillic: 'октябрь' },
+    { latin1995: 'Chrome', cyrillic: 'Chrome', latin2026: 'Chrome' },
+  ],
+});
 
-const cyrillicWord = transliterator.toCyrillic('oktabr');
-console.log(cyrillicWord); // -> 'октябрь' (not 'октабр')
+transliterator.transliterate('oktabr', { from: 'latin1995', to: 'cyrillic' }); // -> 'октябрь' (not 'октабр')
 ```
 
-One exceptional pair is enough for both cyrilllic and latin transliterations.
+One entry works in both directions:
 
 ```js
-// This also works
-const latinWord = transliterator.toLatin('октябрь');
-console.log(latinWord); // -> 'oktabr' (not 'oktyabr')
+transliterator.transliterate('октябрь', { from: 'cyrillic', to: 'latin1995' }); // -> 'oktabr' (not 'oktyabr')
 ```
 
-If exceptional pair is a pair of same words, the word is not transliterated.
+A word spelled the same in two alphabets isn't transliterated between them:
 
 ```js
-const cyrillicWord = transliterator.toCyrillic('Google');
-console.log(cyrillicWord); // -> 'Google'
+transliterator.transliterate('Chrome', { from: 'latin1995', to: 'latin2026' }); // -> 'Chrome' (not 'Çrome')
 ```
 
-Exceptional words with sufixes are also detected.
+Exceptional words with suffixes are also detected.
 
-**Variants of a word with prefixes should be added as separate exceptionals!**
+**Variants of a word with prefixes should be added as separate exceptions!**
 
 ```js
-// This also works
-const latinWord = transliterator.toLatin('октябрда');
-console.log(latinWord); // -> 'oktabrda' (not 'oktyabrda')
+transliterator.transliterate('октябрда', { from: 'cyrillic', to: 'latin1995' }); // -> 'oktabrda' (not 'oktyabrda')
 ```
 
-You can extend the exceptionals list after the initialization of the transliterator.
+You can add exceptions later, or remove all of them:
 
 ```js
-transliterator.extendExceptionals([['nol', 'ноль']]);
+transliterator.addExceptions([{ latin1995: 'nol', cyrillic: 'ноль' }]);
+transliterator.clearExceptions();
 ```
 
-Or purge all of the exceptionals added to transliterator.
+### Migrating from 0.x
 
-```js
-transliterator.purgeExceptionals();
-```
-
-### Pure transliterator functions
-
-There are pure transliterator functions which operate only on basic transliteration rules. These functions don't look up words in exceptionals list.
-
-`cyrillicToLatin(word: string): string`
-
-`latinToCyrillic(word: string): string`
-
-```js
-import Transliterator, { cyrillicToLatin, latinToCyrillic } from 'lotin-kirill';
-
-const transliterator = new Transliterator([['oktabr', 'октябрь']]);
-
-console.log(transliterator.toLatin('октябрь')); // -> 'oktabr'
-console.log(cyrillicToLatin('октябрь')); // -> 'oktyabr'
-
-console.log(transliterator.toCyrillic('oktabr')); // -> 'октябрь'
-console.log(latinToCyrillic('oktabr')); // -> 'октабр'
-```
+| 0.x                                              | 1.0                                                                                    |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `new Transliterator([['oktabr', 'октябрь']])`    | `createTransliterator({ exceptions: [{ latin1995: 'oktabr', cyrillic: 'октябрь' }] })` |
+| `t.toCyrillic(text)`, `t.textToCyrillic(text)`   | `t.transliterate(text, { from: 'latin1995', to: 'cyrillic' })`                         |
+| `t.toLatin(text)`, `t.textToLatin(text)`         | `t.transliterate(text, { from: 'cyrillic', to: 'latin1995' })`                         |
+| `t.toCyrillic(['…', '…'])`                       | `words.map((word) => t.transliterate(word, { from, to }))`                             |
+| `t.extendExceptionals(pairs)`                    | `t.addExceptions(words)`                                                               |
+| `t.purgeExceptionals()`                          | `t.clearExceptions()`                                                                  |
+| `latinToCyrillic(word)`, `cyrillicToLatin(word)` | `createTransliterator().transliterate(word, { from, to })`                             |
+| `lotinKirill.default` (UNPKG)                    | `lotinKirill.createTransliterator`                                                     |
