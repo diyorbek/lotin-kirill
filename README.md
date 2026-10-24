@@ -99,7 +99,20 @@ When using UNPKG distribution:
 
 ### Exceptional words
 
-Some words, mostly loanwords, don't follow the rules. Create a transliterator with a list of them. Each word gives its spelling in at least two alphabets:
+Some words, mostly loanwords, don't follow the rules. The library comes with a list of about 1,100 of them, mostly from the spelling dictionary. It's a separate import, 12 KB gzipped, so the main bundle stays small:
+
+```js
+import { createTransliterator } from 'lotin-kirill';
+import { exceptions } from 'lotin-kirill/exceptions';
+
+const transliterator = createTransliterator({ exceptions });
+
+transliterator.transliterate('litsey', { from: 'latin1995', to: 'cyrillic' }); // -> 'лицей' (not 'литсей')
+```
+
+With UNPKG, add `<script src="https://unpkg.com/lotin-kirill/dist/exceptions.umd.js"></script>` and use `lotinKirill.exceptions`.
+
+Your own words work the same way, with or without the list. Each word gives its spelling in at least two alphabets:
 
 ```js
 import { createTransliterator } from 'lotin-kirill';

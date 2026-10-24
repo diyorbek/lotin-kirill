@@ -26,6 +26,18 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./exceptions": {
+      "types": "./dist/exceptions.d.ts",
+      "import": "./dist/exceptions.js",
+      "require": "./dist/exceptions.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "exceptions": [
+        "./dist/exceptions.d.ts"
+      ]
     }
   },
   "unpkg": "./dist/index.umd.js",
@@ -35,7 +47,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "vite build && vite build --mode umd && tsc -p tsconfig.build.json",
+    "build": "vite build && vite build --mode umd && vite build --mode umd-exceptions && tsc -p tsconfig.build.json",
     "typecheck": "tsc",
     "format": "biome check --write",
     "lint": "biome check",

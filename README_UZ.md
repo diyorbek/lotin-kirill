@@ -99,7 +99,20 @@ UNPKG orqali ulaganda:
 
 ### Istisno soʻzlar
 
-Baʼzi soʻzlar, asosan oʻzlashma soʻzlar, qoidalarga boʻysunmaydi. Transliteratorni ularning roʻyxati bilan yarating. Har bir soʻz kamida ikki alifbodagi yozilishi bilan beriladi:
+Baʼzi soʻzlar, asosan oʻzlashma soʻzlar, qoidalarga boʻysunmaydi. Kutubxonada shunday 1100 ga yaqin soʻz roʻyxati bor, ular asosan imlo lugʻatidan olingan. Asosiy toʻplam kichik qolishi uchun roʻyxat alohida import qilinadi (gzip bilan 12 KB):
+
+```js
+import { createTransliterator } from 'lotin-kirill';
+import { exceptions } from 'lotin-kirill/exceptions';
+
+const transliterator = createTransliterator({ exceptions });
+
+transliterator.transliterate('litsey', { from: 'latin1995', to: 'cyrillic' }); // -> 'лицей' ('литсей' emas)
+```
+
+UNPKG bilan `<script src="https://unpkg.com/lotin-kirill/dist/exceptions.umd.js"></script>` ni qoʻshing va `lotinKirill.exceptions` dan foydalaning.
+
+Oʻz soʻzlaringiz ham xuddi shunday qoʻshiladi, roʻyxat bilan yoki usiz. Har bir soʻz kamida ikki alifbodagi yozilishi bilan beriladi:
 
 ```js
 import { createTransliterator } from 'lotin-kirill';
