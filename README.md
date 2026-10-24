@@ -9,7 +9,7 @@
 
 Transliterator for Uzbek text with high accuracy, between the 1995 and 2026 Latin alphabets and Cyrillic. Used at [transliterator.uz](https://transliterator.uz/)
 
-### [O‘zbek tilida o‘qish](https://github.com/diyorbek/lotin-kirill/blob/master/README_UZ.md)
+### [Oʻzbek tilida oʻqish](https://github.com/diyorbek/lotin-kirill/blob/master/README_UZ.md)
 
 ## Installation
 
@@ -46,11 +46,13 @@ The alphabets:
 
 | Name        | Alphabet                                                      |
 | ----------- | ------------------------------------------------------------- |
-| `latin1995` | the Latin alphabet in use since 1995 (`sh`, `ch`, `o‘`, `g‘`) |
+| `latin1995` | the Latin alphabet in use since 1995 (`sh`, `ch`, `oʻ`, `gʻ`) |
 | `latin2026` | the 2026 Latin alphabet (`ş`, `ç`, `ö`, `ğ`)                  |
 | `cyrillic`  | Cyrillic                                                      |
 
 Any direction works, for example `{ from: 'latin2026', to: 'cyrillic' }`.
+
+The library writes `oʻ` and `gʻ` with `ʻ` (U+02BB) and the apostrophe with `ʼ` (U+02BC), as the official spelling rules require. Input may use any look-alike: `'`, `‘`, `’`, `` ` ``.
 
 ### Detecting the alphabet
 
@@ -60,7 +62,7 @@ With `from: 'auto'`, each word is transliterated from the alphabet it's written 
 transliterator.transliterate('Çoy ichdik', { from: 'auto', to: 'cyrillic' }); // -> 'Чой ичдик'
 ```
 
-A word shows its alphabet through letters only that alphabet uses: any Cyrillic letter; `ş`, `ç`, `ö`, `ğ` for `latin2026`; `sh`, `ch`, `o‘`, `g‘` for `latin1995`. A word without them, like `kitob`, reads the same in both Latin alphabets. One ambiguity remains: in `latin2026`, `sh` can also be `s` + `h`, so give the source for words like `Ishoq`:
+A word shows its alphabet through letters only that alphabet uses: any Cyrillic letter; `ş`, `ç`, `ö`, `ğ` for `latin2026`; `sh`, `ch`, `oʻ`, `gʻ` for `latin1995`. A word without them, like `kitob`, reads the same in both Latin alphabets. One ambiguity remains: in `latin2026`, `sh` can also be `s` + `h`, so give the source for words like `Ishoq`:
 
 ```js
 transliterator.transliterate('Ishoq', { from: 'auto', to: 'cyrillic' }); // -> 'Ишоқ'

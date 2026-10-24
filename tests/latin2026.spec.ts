@@ -47,7 +47,7 @@ describe('latin2026', () => {
         from: 'latin2026',
         to: 'latin1995',
       }),
-    ).toBe('O‘zbekiston shahrida choy ichdik');
+    ).toBe('Oʻzbekiston shahrida choy ichdik');
     expect(
       transliterator.transliterate('Ishoq', {
         from: 'latin2026',
