@@ -15,6 +15,7 @@ export default class Transliterator {
         if (!pair?.[0] || !pair?.[1]) {
           throw new Error(`Invalid exceptional pair ${pair}`);
         }
+
         return { latin: pair[0], cyrillic: pair[1] };
       }),
     );

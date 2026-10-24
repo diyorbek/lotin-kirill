@@ -53,6 +53,7 @@ export function createUzbek(): Uzbek {
     addExceptions(words: ExceptionalWord[]): void {
       for (const word of words) {
         const { cyrillic, newLatin } = word;
+
         if ([word.latin, cyrillic, newLatin].filter(Boolean).length < 2) {
           throw new Error(`Invalid exceptional word ${JSON.stringify(word)}`);
         }
@@ -63,6 +64,7 @@ export function createUzbek(): Uzbek {
 
         if (cyrillic) {
           const stem = cyrillic.replace(/ь$/i, ''); // октябрь, but октябрда
+
           edges.latinToCyrillic.addExceptions({
             words: [[latin, cyrillic]],
             stems: [[latin, stem]],
@@ -86,7 +88,9 @@ export function createUzbek(): Uzbek {
     },
 
     clearExceptions(): void {
-      for (const edge of Object.values(edges)) edge.clearExceptions();
+      for (const edge of Object.values(edges)) {
+        edge.clearExceptions();
+      }
     },
   };
 }

@@ -13,20 +13,33 @@ export class Lexicon {
 
   add(kind: 'words' | 'stems', prepared: string, [key, target]: Pair): void {
     const map = this[kind];
-    if (map.has(prepared)) return; // the first definition wins
+
+    // The first definition wins
+    if (map.has(prepared)) {
+      return;
+    }
+
     map.set(prepared, { key, target, lower: target.toLowerCase() });
-    if (kind === 'stems')
+
+    if (kind === 'stems') {
       this.longestStem = Math.max(this.longestStem, prepared.length);
+    }
   }
 
   /** The whole word, or else the longest stem it starts with. */
   find(word: string): [Entry, number] | undefined {
     const exact = this.words.get(word);
-    if (exact) return [exact, word.length];
+
+    if (exact) {
+      return [exact, word.length];
+    }
 
     for (let n = Math.min(word.length, this.longestStem); n > 0; n--) {
       const stem = this.stems.get(word.slice(0, n));
-      if (stem) return [stem, n];
+
+      if (stem) {
+        return [stem, n];
+      }
     }
   }
 

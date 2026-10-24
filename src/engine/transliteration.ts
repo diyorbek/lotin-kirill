@@ -33,8 +33,12 @@ export class Transliteration {
       to,
     ]);
     this.skip = (definition.skip ?? []).map((skip) => {
-      if (typeof skip === 'function') return skip;
+      if (typeof skip === 'function') {
+        return skip;
+      }
+
       const re = new RegExp(skip.source, flags(skip));
+
       return (token) => re.test(token);
     });
     this.word = new RegExp(word.source, flags(word, 'g'));
@@ -52,6 +56,7 @@ export class Transliteration {
         const lexicon = this.isWord.test(key)
           ? this.wordExceptions
           : this.tokenExceptions;
+
         lexicon.add(kind, key, pair);
       }
     }
@@ -67,16 +72,21 @@ export class Transliteration {
   }
 
   private transliterateToken(token: string) {
-    if (this.skip.some((skip) => skip(token))) return token;
+    if (this.skip.some((skip) => skip(token))) {
+      return token;
+    }
 
     const found = this.tokenExceptions.find(this.prepare(token));
+
     if (found) {
       const [entry, n] = found;
+
       return (
         restoreWordCase(entry, token.slice(0, n)) +
         this.transliterateWords(token.slice(n))
       );
     }
+
     return this.transliterateWords(token);
   }
 
@@ -90,6 +100,7 @@ export class Transliteration {
     let i = 0;
 
     const found = this.wordExceptions.find(src);
+
     if (found) {
       out = restoreWordCase(found[0], word.slice(0, found[1]));
       i = found[1];
@@ -107,7 +118,10 @@ export class Transliteration {
       } else {
         for (n = Math.min(this.longestLetter, src.length - i); n > 0; n--) {
           to = this.letters.get(src.slice(i, i + n));
-          if (to !== undefined) break;
+
+          if (to !== undefined) {
+            break;
+          }
         }
       }
 
@@ -118,6 +132,7 @@ export class Transliteration {
         i += n;
       }
     }
+
     return out;
   }
 
@@ -127,25 +142,33 @@ export class Transliteration {
 
     for (const [re, to] of this.rules) {
       re.lastIndex = from;
+
       for (let m = re.exec(src); m; m = re.exec(src)) {
         if (m[0] && !hits?.has(m.index)) {
-          if (!hits) hits = new Map();
+          if (!hits) {
+            hits = new Map();
+          }
+
           hits.set(m.index, [
             m[0].length,
             typeof to === 'function' ? to(m) : to,
           ]);
         }
+
         re.lastIndex = m.index + 1; // let matches overlap; the scan decides which apply
       }
     }
+
     return hits;
   }
 
   private prepare(s: string) {
     const prepared = this.normalize(lower(s));
+
     if (prepared.length !== s.length) {
       throw new Error('normalize() must not change the length of a word');
     }
+
     return prepared;
   }
 }
