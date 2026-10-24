@@ -1,6 +1,6 @@
 {
   "name": "lotin-kirill",
-  "version": "0.1.5",
+  "version": "1.0.0",
   "description": "Transliterate Uzbek text between the 1995 and 2026 Latin alphabets and Cyrillic. O'zbekcha matnni 1995 va 2026 yilgi lotin alifbolari hamda kirill alifbosi o'rtasida o'girish.",
   "author": "Diyorbek Sadullaev <diyorbek3377@gmail.com>",
   "license": "MIT",
