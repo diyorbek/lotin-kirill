@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import Transliterator from '../src';
+import { latin1995Cyrillic } from './helpers';
 
 const cyrillicLongText = fs
   .readFileSync(`${__dirname}/fixtures/cyrillicText.txt`, 'utf-8')
@@ -9,7 +9,7 @@ const latinLongText = fs
   .readFileSync(`${__dirname}/fixtures/latinText.txt`, 'utf-8')
   .toString();
 
-const t = new Transliterator([
+const t = latin1995Cyrillic([
   ['vaksina', 'вакцина'],
   ['bevaksina', 'бевакцина'],
   ['budjet', 'бюджет'],
@@ -37,7 +37,7 @@ describe('General text transliteration', () => {
 
   test('text', () => {
     expect(
-      t.textToCyrillic(
+      t.toCyrillic(
         ` yoga bevaksina. VAKSINA Vaksina, Yogadan "vaksinator" vaksinatsiya YOGAning`,
       ),
     ).toBe(
@@ -45,7 +45,7 @@ describe('General text transliteration', () => {
     );
 
     expect(
-      t.textToCyrillic(
+      t.toCyrillic(
         `O‘zbekistonda emlash jarayoniga 3138ta emlash punktlari, 862ta mobil brigadalar (har birida 1 nafar oilaviy shifokor, 1 nafar vaksinator va 1 nafar muolaja hamshirasi mavjud) jalb etilgan. Vaksina olib kelinishi ko‘paygach, xususiy klinikalarda ham emlash ishlari amalga oshiriladi.`,
       ),
     ).toBe(
@@ -53,7 +53,7 @@ describe('General text transliteration', () => {
     );
 
     expect(
-      t.textToCyrillic(
+      t.toCyrillic(
         `"Bu dargoh viloyatdagi 189-masjid bo‘lib, bu yerda namozxonlar uchun barcha qulayliklar hozirlangan. Ushbu masjidda ilk bora o‘qilgan juma namozida bu kabi maskanlar ko‘plab bunyod etilishini niyat qildik", — deydi «Yusufxon o‘g‘li Qosimxon» masjidi imom-xatibi Musoxon Abbasiddinov.`,
       ),
     ).toBe(
@@ -63,7 +63,7 @@ describe('General text transliteration', () => {
 
   test('roman numbers', () => {
     expect(
-      t.textToCyrillic(`
+      t.toCyrillic(`
 I. Bizdan ii ning v sida
 III) keyingi vii da xiv
 IV. yuqoriga V asr CXX dan MXV gacha
@@ -80,12 +80,10 @@ XX . охири
   });
 
   test('long text', () => {
-    expect(t.textToCyrillic(latinLongText)).toBe(cyrillicLongText);
-    expect(t.textToLatin(cyrillicLongText)).toBe(latinLongText);
+    expect(t.toCyrillic(latinLongText)).toBe(cyrillicLongText);
+    expect(t.toLatin(cyrillicLongText)).toBe(latinLongText);
 
-    expect(t.textToCyrillic(t.textToLatin(cyrillicLongText))).toBe(
-      cyrillicLongText,
-    );
-    expect(t.textToLatin(t.textToCyrillic(latinLongText))).toBe(latinLongText);
+    expect(t.toCyrillic(t.toLatin(cyrillicLongText))).toBe(cyrillicLongText);
+    expect(t.toLatin(t.toCyrillic(latinLongText))).toBe(latinLongText);
   });
 });

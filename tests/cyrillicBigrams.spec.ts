@@ -1,6 +1,6 @@
-import Transliterator from '../src';
+import { latin1995Cyrillic } from './helpers';
 
-const t = new Transliterator();
+const t = latin1995Cyrillic();
 
 describe('E cases', () => {
   test.each`

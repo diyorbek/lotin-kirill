@@ -1,7 +1,7 @@
 {
   "name": "lotin-kirill",
   "version": "0.1.5",
-  "description": "Transform Uzbek latin characters into Uzbek-cyrillic characters or vice versa. O'zbekcha so'zlarni lotin alifbosidan kirill alifbosiga (yoki aksincha) o'girish.",
+  "description": "Transliterate Uzbek text between the 1995 and 2026 Latin alphabets and Cyrillic. O'zbekcha matnni 1995 va 2026 yilgi lotin alifbolari hamda kirill alifbosi o'rtasida o'girish.",
   "author": "Diyorbek Sadullaev <diyorbek3377@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/diyorbek/lotin-kirill",

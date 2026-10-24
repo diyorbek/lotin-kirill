@@ -1,7 +1,7 @@
 import fs from 'node:fs';
-import { createUzbek, type ExceptionalWord } from '../src/uzbek';
+import { createTransliterator, type ExceptionalWord } from '../src';
 
-const uzbek = createUzbek();
+const transliterator = createTransliterator();
 
 const latinText = fs
   .readFileSync(`${__dirname}/fixtures/latinText.txt`, 'utf-8')
@@ -20,51 +20,111 @@ describe('latin2026', () => {
   `(
     '$latin1995 → $latin2026 ⇄ $cyrillic',
     ({ latin1995, latin2026, cyrillic }) => {
-      expect(uzbek.latin1995ToLatin2026(latin1995)).toBe(latin2026);
-      expect(uzbek.latin2026ToCyrillic(latin2026)).toBe(cyrillic);
-      expect(uzbek.cyrillicToLatin2026(cyrillic)).toBe(latin2026);
+      expect(
+        transliterator.transliterate(latin1995, {
+          from: 'latin1995',
+          to: 'latin2026',
+        }),
+      ).toBe(latin2026);
+      expect(
+        transliterator.transliterate(latin2026, {
+          from: 'latin2026',
+          to: 'cyrillic',
+        }),
+      ).toBe(cyrillic);
+      expect(
+        transliterator.transliterate(cyrillic, {
+          from: 'cyrillic',
+          to: 'latin2026',
+        }),
+      ).toBe(latin2026);
     },
   );
 
   test('back to latin1995', () => {
-    expect(uzbek.latin2026ToLatin1995('Özbekiston şahrida çoy içdik')).toBe(
-      'O‘zbekiston shahrida choy ichdik',
-    );
-    expect(uzbek.latin2026ToLatin1995('Ishoq')).toBe('Isʼhoq');
+    expect(
+      transliterator.transliterate('Özbekiston şahrida çoy içdik', {
+        from: 'latin2026',
+        to: 'latin1995',
+      }),
+    ).toBe('O‘zbekiston shahrida choy ichdik');
+    expect(
+      transliterator.transliterate('Ishoq', {
+        from: 'latin2026',
+        to: 'latin1995',
+      }),
+    ).toBe('Isʼhoq');
   });
 
   test('long text', () => {
-    const latin2026 = uzbek.latin1995ToLatin2026(latinText);
+    const latin2026 = transliterator.transliterate(latinText, {
+      from: 'latin1995',
+      to: 'latin2026',
+    });
 
-    expect(uzbek.latin2026ToLatin1995(latin2026)).toBe(latinText);
-    expect(uzbek.latin2026ToCyrillic(latin2026)).toBe(
-      uzbek.latin1995ToCyrillic(latinText),
+    expect(
+      transliterator.transliterate(latin2026, {
+        from: 'latin2026',
+        to: 'latin1995',
+      }),
+    ).toBe(latinText);
+    expect(
+      transliterator.transliterate(latin2026, {
+        from: 'latin2026',
+        to: 'cyrillic',
+      }),
+    ).toBe(
+      transliterator.transliterate(latinText, {
+        from: 'latin1995',
+        to: 'cyrillic',
+      }),
     );
   });
 
   test('exceptions across three alphabets', () => {
-    const uz = createUzbek();
+    const uz = createTransliterator();
+
     uz.addExceptions([
       { latin1995: 'Chrome', cyrillic: 'Chrome', latin2026: 'Chrome' },
       { cyrillic: 'октябрь', latin2026: 'oktabr' },
     ]);
 
-    expect(uzbek.latin1995ToLatin2026('Chrome')).toBe('Çrome'); // the rules alone
-    expect(uz.latin1995ToLatin2026('Chrome')).toBe('Chrome');
-    expect(uz.cyrillicToLatin2026('Chrome')).toBe('Chrome');
-    expect(uz.cyrillicToLatin2026('октябрда')).toBe('oktabrda');
-    expect(uz.latin2026ToCyrillic('oktabr')).toBe('октябрь');
-    expect(uz.cyrillicToLatin1995('октябрь')).toBe('oktabr');
+    // The rules alone
+    expect(
+      transliterator.transliterate('Chrome', {
+        from: 'latin1995',
+        to: 'latin2026',
+      }),
+    ).toBe('Çrome');
+
+    expect(
+      uz.transliterate('Chrome', { from: 'latin1995', to: 'latin2026' }),
+    ).toBe('Chrome');
+    expect(
+      uz.transliterate('Chrome', { from: 'cyrillic', to: 'latin2026' }),
+    ).toBe('Chrome');
+    expect(
+      uz.transliterate('октябрда', { from: 'cyrillic', to: 'latin2026' }),
+    ).toBe('oktabrda');
+    expect(
+      uz.transliterate('oktabr', { from: 'latin2026', to: 'cyrillic' }),
+    ).toBe('октябрь');
+    expect(
+      uz.transliterate('октябрь', { from: 'cyrillic', to: 'latin1995' }),
+    ).toBe('oktabr');
 
     uz.clearExceptions();
-    expect(uz.latin1995ToLatin2026('Chrome')).toBe('Çrome');
+
+    expect(
+      uz.transliterate('Chrome', { from: 'latin1995', to: 'latin2026' }),
+    ).toBe('Çrome');
   });
 
   test('an exceptional word needs at least two spellings', () => {
     // The type rules this out; plain JavaScript callers can still pass it
     const word = { latin1995: 'Chrome' } as unknown as ExceptionalWord;
 
-    expect(() => uzbek.addExceptions([word])).toThrowError(
+    expect(() => createTransliterator().addExceptions([word])).toThrowError(
       new Error('Invalid exceptional word {"latin1995":"Chrome"}'),
     );
   });

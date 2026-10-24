@@ -1,5 +1,5 @@
-import Transliterator from '../src';
 import { LATIN1995_TO_CYRILLIC } from '../src/uzbek';
+import { latin1995Cyrillic } from './helpers';
 
 // Single letters, uppercase then lowercase: A, a, B, b, …
 const LATIN_CHARACTERS = Object.fromEntries(
@@ -11,7 +11,7 @@ const LATIN_CHARACTERS = Object.fromEntries(
     ]),
 );
 
-const t = new Transliterator();
+const t = latin1995Cyrillic();
 
 describe('Apostrophe latin to cyrillic', () => {
   test('detects apostrophe and character-casing', () => {
@@ -133,7 +133,7 @@ describe('Detect Э', () => {
   });
 
   test('special combinations', () => {
-    expect(t.toCyrillic(['reemigiratsiya', 'reyester', 'dee'])).toEqual([
+    expect(['reemigiratsiya', 'reyester', 'dee'].map(t.toCyrillic)).toEqual([
       'реэмигирация',
       'реестер',
       'деэ',

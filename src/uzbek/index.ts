@@ -7,25 +7,35 @@ export { CYRILLIC_TO_LATIN1995, LATIN1995_TO_CYRILLIC } from './cyrillic';
 export { APOSTROPHE, TURNED_COMMA } from './latin1995';
 export { LATIN1995_TO_LATIN2026, LATIN2026_TO_LATIN1995 } from './latin2026';
 
+const ALPHABETS = ['latin1995', 'latin2026', 'cyrillic'] as const;
+
+export type Alphabet = (typeof ALPHABETS)[number];
+
+export interface Direction {
+  from: Alphabet;
+  to: Alphabet;
+}
+
 /** A word that doesn't follow the rules, spelled in at least two alphabets. */
 export type ExceptionalWord =
   | { latin1995: string; cyrillic: string; latin2026?: string }
   | { latin1995: string; latin2026: string; cyrillic?: string }
   | { cyrillic: string; latin2026: string; latin1995?: string };
 
-export interface Uzbek {
-  latin1995ToCyrillic(text: string): string;
-  cyrillicToLatin1995(text: string): string;
-  latin1995ToLatin2026(text: string): string;
-  latin2026ToLatin1995(text: string): string;
-  latin2026ToCyrillic(text: string): string;
-  cyrillicToLatin2026(text: string): string;
+export interface Transliterator {
+  transliterate(text: string, direction: Direction): string;
   addExceptions(words: ExceptionalWord[]): void;
   clearExceptions(): void;
 }
 
+export interface TransliteratorOptions {
+  exceptions?: ExceptionalWord[];
+}
+
 // latin1995 is the hub: latin2026 ⇄ latin1995 ⇄ cyrillic
-export function createUzbek(): Uzbek {
+export function createTransliterator({
+  exceptions = [],
+}: TransliteratorOptions = {}): Transliterator {
   const edges = {
     latin1995ToCyrillic: new Transliteration(LATIN1995_TO_CYRILLIC),
     cyrillicToLatin1995: new Transliteration(CYRILLIC_TO_LATIN1995),
@@ -41,13 +51,37 @@ export function createUzbek(): Uzbek {
   const latin2026ToLatin1995 = (text: string) =>
     edges.latin2026ToLatin1995.transliterate(text);
 
-  return {
-    latin1995ToCyrillic,
-    cyrillicToLatin1995,
-    latin1995ToLatin2026,
-    latin2026ToLatin1995,
-    latin2026ToCyrillic: chain(latin2026ToLatin1995, latin1995ToCyrillic),
-    cyrillicToLatin2026: chain(cyrillicToLatin1995, latin1995ToLatin2026),
+  const unchanged = (text: string) => text;
+
+  // Every direction; latin2026 ⇄ cyrillic goes through latin1995
+  const paths: Record<Alphabet, Record<Alphabet, (text: string) => string>> = {
+    latin1995: {
+      latin1995: unchanged,
+      latin2026: latin1995ToLatin2026,
+      cyrillic: latin1995ToCyrillic,
+    },
+    latin2026: {
+      latin1995: latin2026ToLatin1995,
+      latin2026: unchanged,
+      cyrillic: chain(latin2026ToLatin1995, latin1995ToCyrillic),
+    },
+    cyrillic: {
+      latin1995: cyrillicToLatin1995,
+      latin2026: chain(cyrillicToLatin1995, latin1995ToLatin2026),
+      cyrillic: unchanged,
+    },
+  };
+
+  const transliterator: Transliterator = {
+    transliterate(text: string, { from, to }: Direction): string {
+      for (const alphabet of [from, to]) {
+        if (!ALPHABETS.includes(alphabet)) {
+          throw new Error(`Unknown alphabet: ${alphabet}`);
+        }
+      }
+
+      return paths[from][to](text);
+    },
 
     // Each word becomes exceptions on the edges to and from latin1995
     addExceptions(words: ExceptionalWord[]): void {
@@ -96,4 +130,8 @@ export function createUzbek(): Uzbek {
       }
     },
   };
+
+  transliterator.addExceptions(exceptions);
+
+  return transliterator;
 }
