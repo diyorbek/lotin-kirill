@@ -57,6 +57,9 @@
     "postversion": "git push && git push --tags",
     "prepublishOnly": "npm run typecheck && npm run lint && npm run build"
   },
+  "np": {
+    "message": "chore: Release %s"
+  },
   "devDependencies": {
     "@biomejs/biome": "2.6.2",
     "@types/node": "^24.19.2",
