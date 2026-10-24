@@ -4,13 +4,17 @@ const hasCase = (c: string) => c.toLowerCase() !== c.toUpperCase();
 const isUpper = (c?: string) => c !== undefined && c !== c.toLowerCase();
 const isCasedLetter = (c?: string) => c !== undefined && hasCase(c);
 
+// First letter uppercase, the rest lowercase. "First letter" is the first
+// character that has a case, so leading digits or apostrophes are skipped:
+// "3dmax" → "3Dmax", where a plain capitalize would leave it unchanged.
 function capitalize(s: string): string {
-  for (let i = 0; i < s.length; i++) {
-    if (hasCase(s[i])) {
-      return s.slice(0, i) + s[i].toUpperCase() + s.slice(i + 1).toLowerCase();
-    }
-  }
-  return s;
+  let i = 0;
+  while (i < s.length && !hasCase(s[i])) i++;
+  return (
+    s.slice(0, i) +
+    s.slice(i, i + 1).toUpperCase() +
+    s.slice(i + 1).toLowerCase()
+  );
 }
 
 // Lowercase without changing the length, so positions in the original stay valid
