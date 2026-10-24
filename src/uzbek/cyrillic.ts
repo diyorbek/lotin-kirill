@@ -1,10 +1,10 @@
 import type { Definition } from '../engine';
 import { isURL, ROMAN_NUMBER } from '../skip';
-import { APOSTROPHE, TURNED_COMMA, unifyApostrophes } from './latin';
+import { APOSTROPHE, TURNED_COMMA, unifyApostrophes } from './latin1995';
 
 const VOWELS = 'аоэеиуўёюя';
 
-export const LATIN_TO_CYRILLIC: Definition = {
+export const LATIN1995_TO_CYRILLIC: Definition = {
   letters: [
     ['a', 'а'],
     ['b', 'б'],
@@ -52,7 +52,7 @@ export const LATIN_TO_CYRILLIC: Definition = {
   skip: [ROMAN_NUMBER, isURL],
 };
 
-export const CYRILLIC_TO_LATIN: Definition = {
+export const CYRILLIC_TO_LATIN1995: Definition = {
   letters: [
     ['а', 'a'],
     ['б', 'b'],

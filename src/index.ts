@@ -16,7 +16,7 @@ export default class Transliterator {
           throw new Error(`Invalid exceptional pair ${pair}`);
         }
 
-        return { latin: pair[0], cyrillic: pair[1] };
+        return { latin1995: pair[0], cyrillic: pair[1] };
       }),
     );
   }
@@ -46,20 +46,20 @@ export default class Transliterator {
   }
 
   textToCyrillic(text: string): string {
-    return this.uzbek.latinToCyrillic(text);
+    return this.uzbek.latin1995ToCyrillic(text);
   }
 
   textToLatin(text: string): string {
-    return this.uzbek.cyrillicToLatin(text);
+    return this.uzbek.cyrillicToLatin1995(text);
   }
 }
 
 const defaults = createUzbek();
 
 export function latinToCyrillic(word: string): string {
-  return defaults.latinToCyrillic(word);
+  return defaults.latin1995ToCyrillic(word);
 }
 
 export function cyrillicToLatin(word: string): string {
-  return defaults.cyrillicToLatin(word);
+  return defaults.cyrillicToLatin1995(word);
 }

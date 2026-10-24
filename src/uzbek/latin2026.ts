@@ -1,9 +1,9 @@
 import type { Definition } from '../engine';
 import { isURL, ROMAN_NUMBER } from '../skip';
-import { APOSTROPHE, TURNED_COMMA, unifyApostrophes } from './latin';
+import { APOSTROPHE, TURNED_COMMA, unifyApostrophes } from './latin1995';
 
 // The 2026 alphabet replaces sh, ch, oʻ, gʻ with ş, ç, ö, ğ
-export const LATIN_TO_NEW_LATIN: Definition = {
+export const LATIN1995_TO_LATIN2026: Definition = {
   letters: [
     ['sh', 'ş'],
     ['ch', 'ç'],
@@ -15,7 +15,7 @@ export const LATIN_TO_NEW_LATIN: Definition = {
   skip: [ROMAN_NUMBER, isURL],
 };
 
-export const NEW_LATIN_TO_LATIN: Definition = {
+export const LATIN2026_TO_LATIN1995: Definition = {
   letters: [
     ['ş', 'sh'],
     ['ç', 'ch'],
