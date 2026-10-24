@@ -69,31 +69,30 @@ export function detectText(text: string): Alphabet | undefined {
  */
 export function splitByAlphabet(text: string): [Alphabet, string][] {
   const runs: [Alphabet, string][] = [];
-  let pending = '';
+  let current: Alphabet | undefined;
+  let start = 0;
+  let end = 0; // where the last word of the current run ends
 
-  for (const part of text.split(/(\S+)/)) {
-    if (hasLetters(part)) {
-      const alphabet = detectWord(part) ?? 'latin1995';
-      const last = runs.at(-1);
+  for (const match of text.matchAll(/\S+/g)) {
+    const word = match[0];
 
-      if (last?.[0] === alphabet) {
-        last[1] += pending + part;
-      } else {
-        runs.push([alphabet, pending + part]);
+    if (hasLetters(word)) {
+      const alphabet = detectWord(word) ?? 'latin1995';
+
+      if (current && alphabet !== current) {
+        runs.push([current, text.slice(start, end)]);
+        start = end;
       }
 
-      pending = '';
-    } else {
-      pending += part;
+      current = alphabet;
+      end = match.index + word.length;
     }
   }
 
-  const last = runs.at(-1);
-
-  if (last) {
-    last[1] += pending;
-  } else if (pending) {
-    runs.push(['latin1995', pending]);
+  if (current) {
+    runs.push([current, text.slice(start)]);
+  } else if (text) {
+    runs.push(['latin1995', text]);
   }
 
   return runs;
