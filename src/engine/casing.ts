@@ -21,6 +21,10 @@ function capitalize(s: string): string {
 export function lower(s: string): string {
   const l = s.toLowerCase();
   if (l.length === s.length) return l;
+
+  // Only one character changes length: İ (U+0130) lowercases to "i̇", an i plus
+  // a combining dot, which would shift every position after it. Keep such a
+  // character as it is and lowercase the others one by one.
   return Array.from(s, (c) => {
     const lc = c.toLowerCase();
     return lc.length === c.length ? lc : c;
