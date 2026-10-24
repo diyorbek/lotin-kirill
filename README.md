@@ -54,6 +54,8 @@ Any direction works, for example `{ from: 'latin2026', to: 'cyrillic' }`.
 
 The library writes `oʻ` and `gʻ` with `ʻ` (U+02BB) and the apostrophe with `ʼ` (U+02BC), as the official spelling rules require. Input may use any look-alike: `'`, `‘`, `’`, `` ` ``.
 
+Dates take a hyphen in Latin and a space in Cyrillic: `25-mart` ⇄ `25 март`, `1991-yil` ⇄ `1991 йил`, `1990-yillar` ⇄ `1990 йиллар`. Other numbers stay as they are: `5 yil` (five years) ⇄ `5 йил`.
+
 ### Detecting the alphabet
 
 With `from: 'auto'`, each word is transliterated from the alphabet it's written in:

@@ -11,6 +11,8 @@ const SIGNS: [Alphabet, string[]][] = [
   ['latin1995', LATIN1995_TO_LATIN2026.letters.map(([source]) => source)],
 ];
 
+const hasLetters = (text: string) => text.toLowerCase() !== text.toUpperCase();
+
 /**
  * The alphabet a word is written in, or undefined if nothing in it tells the
  * alphabets apart: "Salom" reads the same in both Latin alphabets.
@@ -52,9 +54,47 @@ export function detectText(text: string): Alphabet | undefined {
   }
 
   // Letters, but none that tell the two Latin alphabets apart
-  if (!winner && text.toLowerCase() !== text.toUpperCase()) {
+  if (!winner && hasLetters(text)) {
     return 'latin1995';
   }
 
   return winner;
+}
+
+/**
+ * The text in runs of words written in one alphabet, so that rules across words
+ * still apply. A word that reads the same in both Latin alphabets counts as
+ * latin1995, with the same result; spaces, numbers and punctuation join the run
+ * of the word after them: 25 март stays together.
+ */
+export function splitByAlphabet(text: string): [Alphabet, string][] {
+  const runs: [Alphabet, string][] = [];
+  let pending = '';
+
+  for (const part of text.split(/(\S+)/)) {
+    if (hasLetters(part)) {
+      const alphabet = detectWord(part) ?? 'latin1995';
+      const last = runs.at(-1);
+
+      if (last?.[0] === alphabet) {
+        last[1] += pending + part;
+      } else {
+        runs.push([alphabet, pending + part]);
+      }
+
+      pending = '';
+    } else {
+      pending += part;
+    }
+  }
+
+  const last = runs.at(-1);
+
+  if (last) {
+    last[1] += pending;
+  } else if (pending) {
+    runs.push(['latin1995', pending]);
+  }
+
+  return runs;
 }

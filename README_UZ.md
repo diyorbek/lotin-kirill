@@ -54,6 +54,8 @@ Istalgan yoʻnalishda oʻgirish mumkin, masalan `{ from: 'latin2026', to: 'cyril
 
 Kutubxona `oʻ` va `gʻ` harflarini `ʻ` (U+02BB), tutuq belgisini esa `ʼ` (U+02BC) bilan yozadi, imlo qoidalari shuni talab qiladi. Kiritilgan matnda ularga oʻxshash istalgan belgi boʻlishi mumkin: `'`, `‘`, `’`, `` ` ``.
 
+Sanalar lotinchada chiziqcha bilan, kirillchada boʻsh joy bilan yoziladi: `25-mart` ⇄ `25 март`, `1991-yil` ⇄ `1991 йил`, `1990-yillar` ⇄ `1990 йиллар`. Boshqa sonlar oʻzgarmaydi: `5 yil` (besh yil) ⇄ `5 йил`.
+
 ### Alifboni aniqlash
 
 `from: 'auto'` berilsa, har bir soʻz oʻzi yozilgan alifbodan oʻgiriladi:
