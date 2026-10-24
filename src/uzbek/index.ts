@@ -1,6 +1,6 @@
 import { chain, Transliteration } from '../engine';
 import { CYRILLIC_TO_LATIN1995, LATIN1995_TO_CYRILLIC } from './cyrillic';
-import { detectText, detectWord } from './detect';
+import { detectText, splitByAlphabet } from './detect';
 import { libraryLatin } from './latin1995';
 import { LATIN1995_TO_LATIN2026, LATIN2026_TO_LATIN1995 } from './latin2026';
 
@@ -87,11 +87,9 @@ export function createTransliterator({
       }
 
       if (from === 'auto') {
-        // Each word through its own alphabet; one that reads the same in both
-        // Latin alphabets goes through latin1995, with the same result
-        return text.replace(/\S+/g, (word) =>
-          paths[detectWord(word) ?? 'latin1995'][to](word),
-        );
+        return splitByAlphabet(text)
+          .map(([alphabet, run]) => paths[alphabet][to](run))
+          .join('');
       }
 
       return paths[from][to](text);

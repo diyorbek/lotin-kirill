@@ -123,10 +123,10 @@ describe('Я cases', () => {
 describe('Ў cases', () => {
   test.each`
     cyrillic | latin
-    ${'Ў'}   | ${'O‘'}
-    ${'ў'}   | ${'o‘'}
-    ${'Ўъ'}  | ${'O‘'}
-    ${'ўъ'}  | ${'o‘'}
+    ${'Ў'}   | ${'Oʻ'}
+    ${'ў'}   | ${'oʻ'}
+    ${'Ўъ'}  | ${'Oʻ'}
+    ${'ўъ'}  | ${'oʻ'}
   `('$cyrillic => $latin', ({ cyrillic, latin }) => {
     expect(t.toLatin(cyrillic)).toBe(latin);
   });
@@ -135,10 +135,10 @@ describe('Ў cases', () => {
 describe('Ғ cases', () => {
   test.each`
     cyrillic | latin
-    ${'Ғ'}   | ${'G‘'}
-    ${'ғ'}   | ${'g‘'}
-    ${'Ғъ'}  | ${'G‘'}
-    ${'ғъ'}  | ${'g‘'}
+    ${'Ғ'}   | ${'Gʻ'}
+    ${'ғ'}   | ${'gʻ'}
+    ${'Ғъ'}  | ${'Gʻ'}
+    ${'ғъ'}  | ${'gʻ'}
   `('$cyrillic => $latin', ({ cyrillic, latin }) => {
     expect(t.toLatin(cyrillic)).toBe(latin);
   });

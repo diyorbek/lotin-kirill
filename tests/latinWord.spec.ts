@@ -132,6 +132,16 @@ describe('Detect Э', () => {
     expect(t.toCyrillic('EeEeeE')).toBe('ЭеЭеэЕ');
   });
 
+  test('after a vowel', () => {
+    expect(
+      ['aeroport', 'poeziya', 'duet', 'dielektrik', "be'etibor", "o'e"].map(
+        t.toCyrillic,
+      ),
+    ).toEqual(['аэропорт', 'поэзия', 'дуэт', 'диэлектрик', 'беъэтибор', 'ўэ']);
+    expect(t.toCyrillic('AEROPORT Aeroport')).toBe('АЭРОПОРТ Аэропорт');
+    expect(t.toCyrillic('Aliyev')).toBe('Алиев');
+  });
+
   test('special combinations', () => {
     expect(['reemigiratsiya', 'reyester', 'dee'].map(t.toCyrillic)).toEqual([
       'реэмигирация',

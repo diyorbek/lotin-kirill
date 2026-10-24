@@ -7,11 +7,11 @@
 [![](https://img.shields.io/bundlephobia/minzip/lotin-kirill)](https://bundlephobia.com/result?p=lotin-kirill)
 [![](https://img.shields.io/npm/l/lotin-kirill)](https://npmjs.com/lotin-kirill)
 
-O‘zbek tilidagi so‘zlarni yuqori aniqlikda transliteratsiya qiluvchi kutubxona. So‘zlarni 1995 va 2026 yilgi lotin alifbolari hamda kirill alifbosi o‘rtasida o‘girish.
+Oʻzbek tilidagi soʻzlarni yuqori aniqlikda transliteratsiya qiluvchi kutubxona. Soʻzlarni 1995 va 2026 yilgi lotin alifbolari hamda kirill alifbosi oʻrtasida oʻgirish.
 
 ### [Read in English](https://github.com/diyorbek/lotin-kirill/blob/master/README.md)
 
-## O‘rnatish
+## Oʻrnatish
 
 NPM
 
@@ -46,28 +46,32 @@ Alifbolar:
 
 | Nomi        | Alifbo                                                                    |
 | ----------- | ------------------------------------------------------------------------- |
-| `latin1995` | 1995-yildan beri qo‘llanilayotgan lotin alifbosi (`sh`, `ch`, `o‘`, `g‘`) |
+| `latin1995` | 1995-yildan beri qoʻllanilayotgan lotin alifbosi (`sh`, `ch`, `oʻ`, `gʻ`) |
 | `latin2026` | 2026-yilgi lotin alifbosi (`ş`, `ç`, `ö`, `ğ`)                            |
 | `cyrillic`  | kirill alifbosi                                                           |
 
-Istalgan yo‘nalishda o‘girish mumkin, masalan `{ from: 'latin2026', to: 'cyrillic' }`.
+Istalgan yoʻnalishda oʻgirish mumkin, masalan `{ from: 'latin2026', to: 'cyrillic' }`.
+
+Kutubxona `oʻ` va `gʻ` harflarini `ʻ` (U+02BB), tutuq belgisini esa `ʼ` (U+02BC) bilan yozadi, imlo qoidalari shuni talab qiladi. Kiritilgan matnda ularga oʻxshash istalgan belgi boʻlishi mumkin: `'`, `‘`, `’`, `` ` ``.
+
+Sanalar lotinchada chiziqcha bilan, kirillchada boʻsh joy bilan yoziladi: `25-mart` ⇄ `25 март`, `1991-yil` ⇄ `1991 йил`, `1990-yillar` ⇄ `1990 йиллар`. Boshqa sonlar oʻzgarmaydi: `5 yil` (besh yil) ⇄ `5 йил`.
 
 ### Alifboni aniqlash
 
-`from: 'auto'` berilsa, har bir so‘z o‘zi yozilgan alifbodan o‘giriladi:
+`from: 'auto'` berilsa, har bir soʻz oʻzi yozilgan alifbodan oʻgiriladi:
 
 ```js
 transliterator.transliterate('Çoy ichdik', { from: 'auto', to: 'cyrillic' }); // -> 'Чой ичдик'
 ```
 
-So‘z o‘z alifbosini faqat o‘sha alifboda bor harflar orqali ko‘rsatadi: istalgan kirill harfi; `latin2026` uchun `ş`, `ç`, `ö`, `ğ`; `latin1995` uchun `sh`, `ch`, `o‘`, `g‘`. Bunday harflari yo‘q so‘z, masalan `kitob`, ikkala lotin alifbosida bir xil yoziladi. Bitta noaniqlik qoladi: `latin2026` da `sh` `s` + `h` ham bo‘lishi mumkin, shuning uchun `Ishoq` kabi so‘zlar uchun manba alifboni ko‘rsating:
+Soʻz oʻz alifbosini faqat oʻsha alifboda bor harflar orqali koʻrsatadi: istalgan kirill harfi; `latin2026` uchun `ş`, `ç`, `ö`, `ğ`; `latin1995` uchun `sh`, `ch`, `oʻ`, `gʻ`. Bunday harflari yoʻq soʻz, masalan `kitob`, ikkala lotin alifbosida bir xil yoziladi. Bitta noaniqlik qoladi: `latin2026` da `sh` `s` + `h` ham boʻlishi mumkin, shuning uchun `Ishoq` kabi soʻzlar uchun manba alifboni koʻrsating:
 
 ```js
 transliterator.transliterate('Ishoq', { from: 'auto', to: 'cyrillic' }); // -> 'Ишоқ'
 transliterator.transliterate('Ishoq', { from: 'latin2026', to: 'cyrillic' }); // -> 'Исҳоқ'
 ```
 
-`detect` matn qaysi alifboda yozilganini, buni ko‘rsatadigan so‘zlar bo‘yicha aniqlaydi:
+`detect` matn qaysi alifboda yozilganini, buni koʻrsatadigan soʻzlar boʻyicha aniqlaydi:
 
 ```js
 transliterator.detect('Men bugun kitob öqidim'); // -> 'latin2026'
@@ -93,9 +97,22 @@ UNPKG orqali ulaganda:
 </script>
 ```
 
-### Istisno so‘zlar
+### Istisno soʻzlar
 
-Ba’zi so‘zlar, asosan o‘zlashma so‘zlar, qoidalarga bo‘ysunmaydi. Transliteratorni ularning ro‘yxati bilan yarating. Har bir so‘z kamida ikki alifbodagi yozilishi bilan beriladi:
+Baʼzi soʻzlar, asosan oʻzlashma soʻzlar, qoidalarga boʻysunmaydi. Kutubxonada shunday 1100 ga yaqin soʻz roʻyxati bor, ular asosan imlo lugʻatidan olingan. Asosiy toʻplam kichik qolishi uchun roʻyxat alohida import qilinadi (gzip bilan 12 KB):
+
+```js
+import { createTransliterator } from 'lotin-kirill';
+import { exceptions } from 'lotin-kirill/exceptions';
+
+const transliterator = createTransliterator({ exceptions });
+
+transliterator.transliterate('litsey', { from: 'latin1995', to: 'cyrillic' }); // -> 'лицей' ('литсей' emas)
+```
+
+UNPKG bilan `<script src="https://unpkg.com/lotin-kirill/dist/exceptions.umd.js"></script>` ni qoʻshing va `lotinKirill.exceptions` dan foydalaning.
+
+Oʻz soʻzlaringiz ham xuddi shunday qoʻshiladi, roʻyxat bilan yoki usiz. Har bir soʻz kamida ikki alifbodagi yozilishi bilan beriladi:
 
 ```js
 import { createTransliterator } from 'lotin-kirill';
@@ -110,34 +127,34 @@ const transliterator = createTransliterator({
 transliterator.transliterate('oktabr', { from: 'latin1995', to: 'cyrillic' }); // -> 'октябрь' ('октабр' emas)
 ```
 
-Bitta yozuv ikkala yo‘nalish uchun yetarli:
+Bitta yozuv ikkala yoʻnalish uchun yetarli:
 
 ```js
 transliterator.transliterate('октябрь', { from: 'cyrillic', to: 'latin1995' }); // -> 'oktabr' ('oktyabr' emas)
 ```
 
-Ikki alifboda bir xil yoziladigan so‘z ular orasida o‘girilmaydi:
+Ikki alifboda bir xil yoziladigan soʻz ular orasida oʻgirilmaydi:
 
 ```js
 transliterator.transliterate('Chrome', { from: 'latin1995', to: 'latin2026' }); // -> 'Chrome' ('Çrome' emas)
 ```
 
-Istisno so‘zlar qo‘shimcha qo‘shilgan holatda ham to‘g‘ri o‘giriladi.
+Istisno soʻzlar qoʻshimcha qoʻshilgan holatda ham toʻgʻri oʻgiriladi.
 
-**Faqat old qo‘shimchalar bundan mustasno!** So‘zning old qo‘shimcha qo‘shilgan varianti alohida istisno sifatida qo‘shilishi kerak.
+**Faqat old qoʻshimchalar bundan mustasno!** Soʻzning old qoʻshimcha qoʻshilgan varianti alohida istisno sifatida qoʻshilishi kerak.
 
 ```js
 transliterator.transliterate('октябрда', { from: 'cyrillic', to: 'latin1995' }); // -> 'oktabrda' ('oktyabrda' emas)
 ```
 
-Istisnolarni keyinroq qo‘shish yoki hammasini o‘chirish mumkin:
+Istisnolarni keyinroq qoʻshish yoki hammasini oʻchirish mumkin:
 
 ```js
 transliterator.addExceptions([{ latin1995: 'nol', cyrillic: 'ноль' }]);
 transliterator.clearExceptions();
 ```
 
-### 0.x versiyadan o‘tish
+### 0.x versiyadan oʻtish
 
 | 0.x                                              | 1.0                                                                                    |
 | ------------------------------------------------ | -------------------------------------------------------------------------------------- |

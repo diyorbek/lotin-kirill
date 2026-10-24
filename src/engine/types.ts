@@ -21,6 +21,12 @@ export interface Definition extends Exceptions {
   letters: Pair[];
   /** Checked before `letters`; the first rule that matches at a position wins. */
   rules?: Rule[];
+  /**
+   * Rules across words, run in order on the whole text before its words are
+   * transliterated. Unlike `rules`, they see the text as written: add the `i`
+   * flag where case doesn't matter.
+   */
+  textRules?: Array<[RegExp, string]>;
   /** Tokens to leave as they are, e.g. Roman numerals or URLs. */
   skip?: Array<RegExp | ((token: string) => boolean)>;
   /** What a word is. Default: letters, combining marks and apostrophes. */

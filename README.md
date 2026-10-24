@@ -9,7 +9,7 @@
 
 Transliterator for Uzbek text with high accuracy, between the 1995 and 2026 Latin alphabets and Cyrillic. Used at [transliterator.uz](https://transliterator.uz/)
 
-### [O‘zbek tilida o‘qish](https://github.com/diyorbek/lotin-kirill/blob/master/README_UZ.md)
+### [Oʻzbek tilida oʻqish](https://github.com/diyorbek/lotin-kirill/blob/master/README_UZ.md)
 
 ## Installation
 
@@ -46,11 +46,15 @@ The alphabets:
 
 | Name        | Alphabet                                                      |
 | ----------- | ------------------------------------------------------------- |
-| `latin1995` | the Latin alphabet in use since 1995 (`sh`, `ch`, `o‘`, `g‘`) |
+| `latin1995` | the Latin alphabet in use since 1995 (`sh`, `ch`, `oʻ`, `gʻ`) |
 | `latin2026` | the 2026 Latin alphabet (`ş`, `ç`, `ö`, `ğ`)                  |
 | `cyrillic`  | Cyrillic                                                      |
 
 Any direction works, for example `{ from: 'latin2026', to: 'cyrillic' }`.
+
+The library writes `oʻ` and `gʻ` with `ʻ` (U+02BB) and the apostrophe with `ʼ` (U+02BC), as the official spelling rules require. Input may use any look-alike: `'`, `‘`, `’`, `` ` ``.
+
+Dates take a hyphen in Latin and a space in Cyrillic: `25-mart` ⇄ `25 март`, `1991-yil` ⇄ `1991 йил`, `1990-yillar` ⇄ `1990 йиллар`. Other numbers stay as they are: `5 yil` (five years) ⇄ `5 йил`.
 
 ### Detecting the alphabet
 
@@ -60,7 +64,7 @@ With `from: 'auto'`, each word is transliterated from the alphabet it's written 
 transliterator.transliterate('Çoy ichdik', { from: 'auto', to: 'cyrillic' }); // -> 'Чой ичдик'
 ```
 
-A word shows its alphabet through letters only that alphabet uses: any Cyrillic letter; `ş`, `ç`, `ö`, `ğ` for `latin2026`; `sh`, `ch`, `o‘`, `g‘` for `latin1995`. A word without them, like `kitob`, reads the same in both Latin alphabets. One ambiguity remains: in `latin2026`, `sh` can also be `s` + `h`, so give the source for words like `Ishoq`:
+A word shows its alphabet through letters only that alphabet uses: any Cyrillic letter; `ş`, `ç`, `ö`, `ğ` for `latin2026`; `sh`, `ch`, `oʻ`, `gʻ` for `latin1995`. A word without them, like `kitob`, reads the same in both Latin alphabets. One ambiguity remains: in `latin2026`, `sh` can also be `s` + `h`, so give the source for words like `Ishoq`:
 
 ```js
 transliterator.transliterate('Ishoq', { from: 'auto', to: 'cyrillic' }); // -> 'Ишоқ'
@@ -95,7 +99,20 @@ When using UNPKG distribution:
 
 ### Exceptional words
 
-Some words, mostly loanwords, don't follow the rules. Create a transliterator with a list of them. Each word gives its spelling in at least two alphabets:
+Some words, mostly loanwords, don't follow the rules. The library comes with a list of about 1,100 of them, mostly from the spelling dictionary. It's a separate import, 12 KB gzipped, so the main bundle stays small:
+
+```js
+import { createTransliterator } from 'lotin-kirill';
+import { exceptions } from 'lotin-kirill/exceptions';
+
+const transliterator = createTransliterator({ exceptions });
+
+transliterator.transliterate('litsey', { from: 'latin1995', to: 'cyrillic' }); // -> 'лицей' (not 'литсей')
+```
+
+With UNPKG, add `<script src="https://unpkg.com/lotin-kirill/dist/exceptions.umd.js"></script>` and use `lotinKirill.exceptions`.
+
+Your own words work the same way, with or without the list. Each word gives its spelling in at least two alphabets:
 
 ```js
 import { createTransliterator } from 'lotin-kirill';

@@ -1,5 +1,6 @@
 import type { Definition } from '../engine';
 import { isURL, ROMAN_NUMBER } from '../skip';
+import { CYRILLIC_DATE, LATIN_DATE } from './dates';
 import { APOSTROPHE, TURNED_COMMA, unifyApostrophes } from './latin1995';
 
 const VOWELS = 'аоэеиуўёюя';
@@ -45,9 +46,11 @@ export const LATIN1995_TO_CYRILLIC: Definition = {
   ],
   rules: [
     [/^e/, 'э'],
+    [/(?<=[aiouʼ])e/, 'э'], // poeziya → поэзия, beʼetibor → беъэтибор; ee is a letter pair
     [/ts(?=i(on|ya))/, 'ц'], // motivatsiya → мотивация
     [/(?<=s)ʼ(?=h)/, ''], // sʼh is с + ҳ, not ш
   ],
+  textRules: [[LATIN_DATE, ' ']], // 25-mart → 25 март
   normalize: unifyApostrophes,
   skip: [ROMAN_NUMBER, isURL],
 };
@@ -99,5 +102,6 @@ export const CYRILLIC_TO_LATIN1995: Definition = {
     [new RegExp(`(?<=[${VOWELS}aeiou])ц`), 'ts'], // Latin vowels too: some tests mix scripts
     [/(?<=с)ҳ/, `${APOSTROPHE}h`], // сҳ → sʼh, not sh
   ],
+  textRules: [[CYRILLIC_DATE, '-']], // 25 март → 25-mart
   skip: [ROMAN_NUMBER, isURL],
 };

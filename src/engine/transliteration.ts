@@ -9,6 +9,7 @@ export class Transliteration {
   private letters: Map<string, string>;
   private longestLetter: number;
   private rules: Rule[];
+  private textRules: Array<[RegExp, string]>;
   private skip: Array<(token: string) => boolean>;
   private word: RegExp;
   private isWord: RegExp;
@@ -32,6 +33,10 @@ export class Transliteration {
       ...Array.from(this.letters.keys(), (source) => source.length),
     );
     this.rules = (definition.rules ?? []).map(([re, replacement]) => [
+      new RegExp(re.source, flags(re, 'g')),
+      replacement,
+    ]);
+    this.textRules = (definition.textRules ?? []).map(([re, replacement]) => [
       new RegExp(re.source, flags(re, 'g')),
       replacement,
     ]);
@@ -71,7 +76,12 @@ export class Transliteration {
   }
 
   transliterate(text: string): string {
-    return text.replace(/\S+/g, (token) => this.transliterateToken(token));
+    const rewritten = this.textRules.reduce(
+      (result, [re, replacement]) => result.replace(re, replacement),
+      text,
+    );
+
+    return rewritten.replace(/\S+/g, (token) => this.transliterateToken(token));
   }
 
   private transliterateToken(token: string) {

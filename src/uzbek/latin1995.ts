@@ -1,7 +1,7 @@
 // latin1995 is the hub every path goes through; these are its spelling conventions
 
 export const APOSTROPHE = 'ʼ'; // U+02BC
-export const TURNED_COMMA = '‘'; // U+2018, what the library outputs after o and g
+export const TURNED_COMMA = 'ʻ'; // U+02BB, what the library outputs after o and g
 
 export const unifyApostrophes = (word: string): string =>
   word.replace(/[ʻʼ’'`‘´]/g, APOSTROPHE);

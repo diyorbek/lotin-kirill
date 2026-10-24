@@ -52,7 +52,11 @@ describe("from: 'auto'", () => {
     ${'Men bugun kitob öqidim'} | ${'cyrillic'}  | ${'Мен бугун китоб ўқидим'}
     ${'Тошкент shahri'}         | ${'latin2026'} | ${'Toşkent şahri'}
     ${'Toşkent'}                | ${'latin2026'} | ${'Toşkent'}
-    ${'2026-yil, 7-iyul'}       | ${'cyrillic'}  | ${'2026-йил, 7-июл'}
+    ${'2026-yil, 7-iyul'}       | ${'cyrillic'}  | ${'2026 йил, 7 июл'}
+    ${'Bugun 25 март'}          | ${'latin1995'} | ${'Bugun 25-mart'}
+    ${' 25 март. '}             | ${'latin1995'} | ${' 25-mart. '}
+    ${' 2026, 7 '}              | ${'cyrillic'}  | ${' 2026, 7 '}
+    ${''}                       | ${'cyrillic'}  | ${''}
   `('$text → $to: $expected', ({ text, to, expected }) => {
     expect(transliterator.transliterate(text, { from: 'auto', to })).toBe(
       expected,
