@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
     },
     test: {
       globals: true,
-      include: ['__tests__/**/*.spec.ts'],
+      include: ['tests/**/*.spec.ts'],
       coverage: { include: ['src/**'], reporter: ['text', 'lcov'] },
     },
   };
