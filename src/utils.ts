@@ -1,5 +1,12 @@
-import anchorme from 'anchorme';
+import anchormeModule from 'anchorme';
 import { APOSTROPHE, TURNED_COMMA } from './characters';
+
+// anchorme is CommonJS with its API on `exports.default`. Bundlers unwrap that,
+// Node's ESM loader doesn't, so accept both shapes.
+const anchorme =
+  'list' in anchormeModule
+    ? anchormeModule
+    : (anchormeModule as unknown as { default: typeof anchormeModule }).default;
 
 const TURNED_COMMA_MATCHER = /[og][ʻʼ’'`‘´]/gi;
 const APOSTROPHE_MATCHER = /[ʻʼ’'`‘´]/gi;

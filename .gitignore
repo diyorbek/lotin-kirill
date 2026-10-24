@@ -1,5 +1,5 @@
 node_modules
-pkg
+dist
 
 # File system
 .DS_Store

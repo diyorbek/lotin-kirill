@@ -28,7 +28,7 @@ yarn add lotin-kirill
 UNPKG
 
 ```html
-<script src="https://unpkg.com/lotin-kirill/dist-umd/index.min.js"></script>
+<script src="https://unpkg.com/lotin-kirill/dist/index.umd.js"></script>
 ```
 
 ## Foydalanish
@@ -44,7 +44,7 @@ const transliterator = new Transliterator();
 UNPKG orqali ulaganda:
 
 ```html
-<script src="https://unpkg.com/lotin-kirill/dist-umd/index.min.js"></script>
+<script src="https://unpkg.com/lotin-kirill/dist/index.umd.js"></script>
 <script>
   const Transliterator = lotinKirill.default;
   const transliterator = new Transliterator();

@@ -1,7 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-yarn typecheck
-yarn format
-yarn lint --fix
-git add .
