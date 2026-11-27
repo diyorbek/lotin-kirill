@@ -56,6 +56,8 @@ The library writes `oʻ` and `gʻ` with `ʻ` (U+02BB) and the apostrophe with `�
 
 Dates take a hyphen in Latin and a space in Cyrillic: `25-mart` ⇄ `25 март`, `1991-yil` ⇄ `1991 йил`, `1990-yillar` ⇄ `1990 йиллар`. Other numbers stay as they are: `5 yil` (five years) ⇄ `5 йил`.
 
+No rule reads across a line break, so a long text can be converted line by line, or in chunks that end at a line break, with the same result as a whole.
+
 ### Detecting the alphabet
 
 With `from: 'auto'`, each word is transliterated from the alphabet it's written in:
@@ -64,7 +66,7 @@ With `from: 'auto'`, each word is transliterated from the alphabet it's written 
 transliterator.transliterate('Çoy ichdik', { from: 'auto', to: 'cyrillic' }); // -> 'Чой ичдик'
 ```
 
-A word shows its alphabet through letters only that alphabet uses: any Cyrillic letter; `ş`, `ç`, `ö`, `ğ` for `latin2026`; `sh`, `ch`, `oʻ`, `gʻ` for `latin1995`. A word without them, like `kitob`, reads the same in both Latin alphabets. One ambiguity remains: in `latin2026`, `sh` can also be `s` + `h`, so give the source for words like `Ishoq`:
+A word shows its alphabet through letters only that alphabet uses: any Cyrillic letter; `ş`, `ç`, `ö`, `ğ` for `latin2026`; `sh`, `ch`, `oʻ`, `gʻ` for `latin1995`. A word without them, like `kitob`, reads the same in both Latin alphabets. A line without any letters stays as it is. One ambiguity remains: in `latin2026`, `sh` can also be `s` + `h`, so give the source for words like `Ishoq`:
 
 ```js
 transliterator.transliterate('Ishoq', { from: 'auto', to: 'cyrillic' }); // -> 'Ишоқ'
