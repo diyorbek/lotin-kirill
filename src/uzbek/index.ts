@@ -1,4 +1,4 @@
-import { chain, Transliteration } from '../engine';
+import { chain, Output, type Path, Transliteration } from '../engine';
 import { CYRILLIC_TO_LATIN1995, LATIN1995_TO_CYRILLIC } from './cyrillic';
 import { detectText, splitByAlphabet } from './detect';
 import { libraryLatin } from './latin1995';
@@ -26,6 +26,12 @@ export type ExceptionalWord =
 
 export interface Transliterator {
   transliterate(text: string, direction: Direction): string;
+  /**
+   * Transliterates the consecutive pieces of one text, e.g. the runs of a
+   * paragraph in a Word file: reads them as one text and gives each piece the
+   * output of its letters. Joined, the result is `transliterate(parts.join(''))`.
+   */
+  transliterateParts(parts: string[], direction: Direction): string[];
   /** The alphabet a text is written in; undefined if it has no letters. */
   detect(text: string): Alphabet | undefined;
   addExceptions(words: ExceptionalWord[]): void;
@@ -46,19 +52,19 @@ export function createTransliterator({
     latin1995ToLatin2026: new Transliteration(LATIN1995_TO_LATIN2026),
     latin2026ToLatin1995: new Transliteration(LATIN2026_TO_LATIN1995),
   };
-  const latin1995ToCyrillic = (text: string) =>
-    edges.latin1995ToCyrillic.transliterate(text);
-  const cyrillicToLatin1995 = (text: string) =>
-    edges.cyrillicToLatin1995.transliterate(text);
-  const latin1995ToLatin2026 = (text: string) =>
-    edges.latin1995ToLatin2026.transliterate(text);
-  const latin2026ToLatin1995 = (text: string) =>
-    edges.latin2026ToLatin1995.transliterate(text);
+  const path =
+    (edge: Transliteration): Path =>
+    (text, cuts) =>
+      edge.transliterateWithCuts(text, cuts);
+  const latin1995ToCyrillic = path(edges.latin1995ToCyrillic);
+  const cyrillicToLatin1995 = path(edges.cyrillicToLatin1995);
+  const latin1995ToLatin2026 = path(edges.latin1995ToLatin2026);
+  const latin2026ToLatin1995 = path(edges.latin2026ToLatin1995);
 
-  const unchanged = (text: string) => text;
+  const unchanged: Path = (text, cuts) => [text, cuts];
 
   // Every direction; latin2026 ⇄ cyrillic goes through latin1995
-  const paths: Record<Alphabet, Record<Alphabet, (text: string) => string>> = {
+  const paths: Record<Alphabet, Record<Alphabet, Path>> = {
     latin1995: {
       latin1995: unchanged,
       latin2026: latin1995ToLatin2026,
@@ -76,23 +82,64 @@ export function createTransliterator({
     },
   };
 
+  function transliterateWithCuts(
+    text: string,
+    cuts: readonly number[],
+    { from, to }: Direction,
+  ): [string, readonly number[]] {
+    if (from !== 'auto' && !ALPHABETS.includes(from)) {
+      throw new Error(`Unknown alphabet: ${from}`);
+    }
+
+    if (!ALPHABETS.includes(to)) {
+      throw new Error(`Unknown alphabet: ${to}`);
+    }
+
+    if (from !== 'auto') {
+      return paths[from][to](text, cuts);
+    }
+
+    const output = new Output(text, cuts);
+    let end = 0;
+
+    for (const [alphabet, run] of splitByAlphabet(text)) {
+      end += run.length;
+
+      const [converted, convertedCuts] = paths[alphabet][to](
+        run,
+        output.cutsBefore(end),
+      );
+
+      output.replace(end, converted, convertedCuts);
+    }
+
+    return output.finish();
+  }
+
   const transliterator: Transliterator = {
-    transliterate(text: string, { from, to }: Direction): string {
-      if (from !== 'auto' && !ALPHABETS.includes(from)) {
-        throw new Error(`Unknown alphabet: ${from}`);
+    transliterate(text: string, direction: Direction): string {
+      return transliterateWithCuts(text, [], direction)[0];
+    },
+
+    transliterateParts(parts: string[], direction: Direction): string[] {
+      const cuts: number[] = [];
+      let length = 0;
+
+      for (const part of parts.slice(0, -1)) {
+        length += part.length;
+        cuts.push(length);
       }
 
-      if (!ALPHABETS.includes(to)) {
-        throw new Error(`Unknown alphabet: ${to}`);
-      }
+      const [text, outputCuts] = transliterateWithCuts(
+        parts.join(''),
+        cuts,
+        direction,
+      );
+      const bounds = [0, ...outputCuts, text.length];
 
-      if (from === 'auto') {
-        return splitByAlphabet(text)
-          .map(([alphabet, run]) => paths[alphabet][to](run))
-          .join('');
-      }
-
-      return paths[from][to](text);
+      return parts.map((_, index) =>
+        text.slice(bounds[index], bounds[index + 1]),
+      );
     },
 
     detect(text: string): Alphabet | undefined {
@@ -110,7 +157,8 @@ export function createTransliterator({
 
         // Every path goes through latin1995, so a missing latin1995 spelling comes from the rules
         const latin1995 =
-          word.latin1995 || latin2026ToLatin1995(latin2026 as string);
+          word.latin1995 ||
+          edges.latin2026ToLatin1995.transliterate(latin2026 as string);
         const latin1995Out = libraryLatin(latin1995);
 
         if (cyrillic) {

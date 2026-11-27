@@ -154,6 +154,21 @@ transliterator.addExceptions([{ latin1995: 'nol', cyrillic: 'ноль' }]);
 transliterator.clearExceptions();
 ```
 
+### Text in pieces
+
+A Word, PowerPoint or Excel file keeps a paragraph in several pieces and starts a new one wherever the formatting changes, also in the middle of a word. Converted one by one, each piece takes its own edges for the edges of a word: a bold `Ҳ` followed by `еч ким` gives `Hyech kim`. `transliterateParts` reads the pieces as one text and gives each piece the output of its own letters, so every result can go back where its piece came from:
+
+```js
+const toLatin = { from: 'cyrillic', to: 'latin1995' };
+const toCyrillic = { from: 'latin1995', to: 'cyrillic' };
+
+transliterator.transliterateParts(['Ҳ', 'еч ким'], toLatin); // -> ['H', 'ech kim']
+transliterator.transliterateParts(['o', 'ʻ', 'zbek'], toCyrillic); // -> ['ў', '', 'збек']
+transliterator.transliterateParts(['2026', ' йил'], toLatin); // -> ['2026', '-yil']
+```
+
+Joined, the results are always what `transliterate` gives for the whole text. Letters that become one (`oʻ` → `ў`) go to the piece where they start, so the next piece may come back empty. A cut inside an exceptional word lands where the word reads the same as by the rules: `okt` + `abr` gives `окт` + `ябрь`.
+
 ### Migrating from 0.x
 
 | 0.x                                              | 1.0                                                                                    |
