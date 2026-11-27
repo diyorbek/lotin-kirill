@@ -154,6 +154,21 @@ transliterator.addExceptions([{ latin1995: 'nol', cyrillic: 'ноль' }]);
 transliterator.clearExceptions();
 ```
 
+### Boʻlaklarga boʻlingan matn
+
+Word, PowerPoint yoki Excel fayli xatboshini bir necha boʻlakda saqlaydi va formatlash oʻzgargan joyda, hatto soʻz oʻrtasida ham, yangi boʻlak boshlaydi. Boʻlaklar alohida oʻgirilsa, har biri oʻz chetini soʻz cheti deb oʻqiydi: qalin `Ҳ` va undan keyingi `еч ким` `Hyech kim` boʻlib qoladi. `transliterateParts` boʻlaklarni bitta matn sifatida oʻqiydi va har bir boʻlakka oʻz harflaridan chiqqan natijani beradi, shunda har bir natijani boʻlagi olingan joyga qaytarish mumkin:
+
+```js
+const toLatin = { from: 'cyrillic', to: 'latin1995' };
+const toCyrillic = { from: 'latin1995', to: 'cyrillic' };
+
+transliterator.transliterateParts(['Ҳ', 'еч ким'], toLatin); // -> ['H', 'ech kim']
+transliterator.transliterateParts(['o', 'ʻ', 'zbek'], toCyrillic); // -> ['ў', '', 'збек']
+transliterator.transliterateParts(['2026', ' йил'], toLatin); // -> ['2026', '-yil']
+```
+
+Natijalar birlashtirilsa, doim butun matn uchun `transliterate` beradigan natija chiqadi. Bitta harfga aylanadigan harflar (`oʻ` → `ў`) ular boshlangan boʻlakka tushadi, shuning uchun keyingi boʻlak boʻsh qaytishi mumkin. Istisno soʻz ichidagi chegara soʻz qoidalar boʻyicha oʻgirilgandagi bilan bir xil oʻqiladigan joyga tushadi: `okt` + `abr` → `окт` + `ябрь`.
+
 ### 0.x versiyadan oʻtish
 
 | 0.x                                              | 1.0                                                                                    |

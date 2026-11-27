@@ -24,7 +24,8 @@ export interface Definition extends Exceptions {
   /**
    * Rules across words, run in order on the whole text before its words are
    * transliterated. Unlike `rules`, they see the text as written: add the `i`
-   * flag where case doesn't matter.
+   * flag where case doesn't matter. The replacement is used as written, without
+   * `$` patterns.
    */
   textRules?: Array<[RegExp, string]>;
   /** Tokens to leave as they are, e.g. Roman numerals or URLs. */
@@ -34,3 +35,12 @@ export interface Definition extends Exceptions {
   /** Clean-up of the lowercased word before matching. Must keep the length. */
   normalize?: (word: string) => string;
 }
+
+/**
+ * A transliteration that follows offsets into the text (cuts), e.g. where the
+ * pieces it was put together from meet: [output, where the cuts land in it].
+ */
+export type Path = (
+  text: string,
+  cuts: readonly number[],
+) => [string, readonly number[]];
