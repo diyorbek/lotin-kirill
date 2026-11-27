@@ -86,9 +86,10 @@ export function createTransliterator({
         throw new Error(`Unknown alphabet: ${to}`);
       }
 
+      // A line without letters stays as it is
       if (from === 'auto') {
         return splitByAlphabet(text)
-          .map(([alphabet, run]) => paths[alphabet][to](run))
+          .map(([alphabet, run]) => (alphabet ? paths[alphabet][to](run) : run))
           .join('');
       }
 

@@ -56,6 +56,8 @@ Kutubxona `oʻ` va `gʻ` harflarini `ʻ` (U+02BB), tutuq belgisini esa `ʼ` (U+0
 
 Sanalar lotinchada chiziqcha bilan, kirillchada boʻsh joy bilan yoziladi: `25-mart` ⇄ `25 март`, `1991-yil` ⇄ `1991 йил`, `1990-yillar` ⇄ `1990 йиллар`. Boshqa sonlar oʻzgarmaydi: `5 yil` (besh yil) ⇄ `5 йил`.
 
+Hech bir qoida qator oxiridan oʻtib oʻqimaydi, shuning uchun uzun matnni qatorma-qator yoki qator oxirida tugaydigan boʻlaklarda oʻgirish mumkin: natija butun matnni oʻgirgandagi bilan bir xil boʻladi.
+
 ### Alifboni aniqlash
 
 `from: 'auto'` berilsa, har bir soʻz oʻzi yozilgan alifbodan oʻgiriladi:
@@ -64,7 +66,7 @@ Sanalar lotinchada chiziqcha bilan, kirillchada boʻsh joy bilan yoziladi: `25-m
 transliterator.transliterate('Çoy ichdik', { from: 'auto', to: 'cyrillic' }); // -> 'Чой ичдик'
 ```
 
-Soʻz oʻz alifbosini faqat oʻsha alifboda bor harflar orqali koʻrsatadi: istalgan kirill harfi; `latin2026` uchun `ş`, `ç`, `ö`, `ğ`; `latin1995` uchun `sh`, `ch`, `oʻ`, `gʻ`. Bunday harflari yoʻq soʻz, masalan `kitob`, ikkala lotin alifbosida bir xil yoziladi. Bitta noaniqlik qoladi: `latin2026` da `sh` `s` + `h` ham boʻlishi mumkin, shuning uchun `Ishoq` kabi soʻzlar uchun manba alifboni koʻrsating:
+Soʻz oʻz alifbosini faqat oʻsha alifboda bor harflar orqali koʻrsatadi: istalgan kirill harfi; `latin2026` uchun `ş`, `ç`, `ö`, `ğ`; `latin1995` uchun `sh`, `ch`, `oʻ`, `gʻ`. Bunday harflari yoʻq soʻz, masalan `kitob`, ikkala lotin alifbosida bir xil yoziladi. Umuman harfi yoʻq qator oʻzgarmaydi. Bitta noaniqlik qoladi: `latin2026` da `sh` `s` + `h` ham boʻlishi mumkin, shuning uchun `Ishoq` kabi soʻzlar uchun manba alifboni koʻrsating:
 
 ```js
 transliterator.transliterate('Ishoq', { from: 'auto', to: 'cyrillic' }); // -> 'Ишоқ'
